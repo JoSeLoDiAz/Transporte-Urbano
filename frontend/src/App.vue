@@ -1,18 +1,22 @@
 <script setup>
-import {ref} from "vue"
-import {useClientStore} from "./store/clientes.js"
+import { ref } from "vue"
+import { useClientStore } from "./store/clientes.js"
 
 const useClient = useClientStore()
 
-let telefono, cc, apellido, nombre, asiento = ref("")
+let telefono = ref("")
+let cc = ref("")
+let apellido = ref("")
+let nombre = ref("")
+let asiento = ref("")
 
-async function registrar(){
+async function registrar() {
   await useClient.addClient({
-    numero_asiento:asiento.value,
-    telefono:telefono.value,
-    cc:cc.value,
-    apellido:apellido.value,
-    nombre:nombre.value
+    numero_asiento: asiento.value,
+    nombre: nombre.value,
+    apellido: apellido.value,
+    cc: cc.value,
+    telefono: telefono.value
   })
 }
 </script>
@@ -41,19 +45,19 @@ async function registrar(){
           </center>
 
           <br>
-          <label for="">Usuario:</label>
+          <label for="">#asiento:</label>
           <div class="input-group mb-3 ">
 
-            <input type="text" class="form-control" v-model="asiento" placeholder="# asiento" aria-label="Recipient's username"
-              aria-describedby="button-addon2">
+            <input type="text" class="form-control" v-model="asiento" placeholder="# asiento"
+              aria-label="Recipient's username" aria-describedby="button-addon2">
             <button class="btn btn border" type="button" id="button-addon2">👤</button>
           </div>
-          <label for="">correo:</label>
+          <label for="">nombre:</label>
           <div class="input-group mb-3 ">
 
-            <input type="text" class="form-control" v-model="nombre" placeholder="nombre" aria-label="Recipient's username"
-              aria-describedby="button-addon2">
-            
+            <input type="text" class="form-control" v-model="nombre" placeholder="nombre"
+              aria-label="Recipient's username" aria-describedby="button-addon2">
+
           </div>
           <label for="">Contraseña:</label>
           <div class="input-group mb-3 ">
@@ -63,14 +67,14 @@ async function registrar(){
 
           </div>
           <div class="input-group mb-3 ">
-            <input type="text" class="form-control" v-model="apellido" name="password" id="password" placeholder="apellido"
-              aria-label="Recipient's username" aria-describedby="button-addon2">
+            <input type="text" class="form-control" v-model="apellido" name="password" id="password"
+              placeholder="apellido" aria-label="Recipient's username" aria-describedby="button-addon2">
 
 
           </div>
           <div class="input-group mb-3 ">
-            <input type="text" class="form-control" v-model="telefono" name="telefono" id="password" placeholder="telefono"
-              aria-label="Recipient's username" aria-describedby="button-addon2">
+            <input type="text" class="form-control" v-model="telefono" name="telefono" id="password"
+              placeholder="telefono" aria-label="Recipient's username" aria-describedby="button-addon2">
 
 
           </div>
