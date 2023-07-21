@@ -9,5 +9,5 @@ hacer comit comentando el arreglo
 git commit -m "aqui el comentario"
 subir al main
 git push -u origin main
-tomar la versión del repositorio remoto (si no esta actualizado)
+tomar la versión del repositorio remoto (si no esta actualizado en vsc)
 git pull origin main --allow-unrelated-histories
