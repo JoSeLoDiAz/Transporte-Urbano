@@ -1,13 +1,40 @@
 Indicaciones Git
 
-clonar repositorio:
+antes que nada excluimos las capertas de node_modules en la raiz del PROYECTO
+en bloc de notas creas un archivo que sera .gitignore y hay pondras
+/node_modules    esto evitara subir la carpeta de modulos y errores que pueda traer
+
+iniciar repo en vscode
+git init
+
+agregar todo a integral de envio
+git add . si da unos warnings entonces ejecuta git config --global core.autocrlf true
+y volvemos a ejecutar git add .
+
+hacer el primer commit del repositorio
+git commit -m "aqui el comentario"
+
+Enlaza tu repositorio local al repositorio remoto, reempla <URL_REPO> con la URL del repositorio remoto:
+git remote add origin <URL_REPO>
+
+subes los cambios al main ejecutando:
+git push -u origin main
+
+Listo!
+
+
+clonar repositorio para los otros integrantes:
 git clone https://github.com/JoSeLoDiAz/Transporte-Urbano.git
 
-emepzar a envar actualizaciones una vez realizadas
+
+empezar a enviar actualizaciones una vez realizadas
 git add . 
+
 hacer comit comentando el arreglo
 git commit -m "aqui el comentario"
+
 subir al main
-git push -u origin main
-tomar la versión del repositorio remoto (si no esta actualizado en vsc)
+git push -u origin main    una vez ejecutado verificar en github
+
+tomar la versión del repositorio de github (si no esta actualizado en vsc)
 git pull origin main --allow-unrelated-histories
