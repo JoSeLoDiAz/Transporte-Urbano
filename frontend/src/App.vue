@@ -34,15 +34,15 @@ async function registrar() {
 
       <div class="card border-2" style="width: 23rem;">
         <div class="card-body">
-          <center>
+          <div>
             <h3 class="card-title">Admi</h3>
-          </center>
+          </div>
 
-          <center>
+          <div>
             <h6 class="card-subtitle mb-2 text-body-secondary mt-4">
               Ingrese los datos para acceder
             </h6>
-          </center>
+          </div>
 
           <br>
           <label for="">#asiento:</label>
