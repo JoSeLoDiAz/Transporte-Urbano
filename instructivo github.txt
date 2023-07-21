@@ -1,0 +1,13 @@
+Indicaciones Git
+
+clonar repositorio:
+git clone https://github.com/JoSeLoDiAz/Transporte-Urbano.git
+
+emepzar a envar actualizaciones una vez realizadas
+git add . 
+hacer comit comentando el arreglo
+git commit -m "aqui el comentario"
+subir al main
+git push -u origin main
+tomar la versión del repositorio remoto (si no esta actualizado)
+git pull origin main --allow-unrelated-histories
