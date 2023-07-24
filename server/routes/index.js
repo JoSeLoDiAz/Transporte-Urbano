@@ -7,6 +7,7 @@ import conductorRouter from "./conductor.js";
 import adminRouter from "./administrador.js";
 import adminrutasRouter from "./administradorRutas.js";
 import vendedorRouter from "./vendedor.js";
+import loginUser from "./loginUser.js";
 
 import { validarJWT } from '../middleware/validar-jwj.js';
 
@@ -17,8 +18,10 @@ router.use("/clientes", clienteRouter);
 router.use("/tikets", tiketRouter);
 router.use("/vehiculos", vehiculoRouter);
 router.use("/admin", validarJWT, adminRouter);
-router.use("/adminRutas",validarJWT, adminrutasRouter);
+router.use("/adminRutas", validarJWT, adminrutasRouter);
 router.use("/conductores", conductorRouter);
-router.use("/vendedores",validarJWT, vendedorRouter);
+router.use("/vendedores", validarJWT, vendedorRouter);
+
+router.use("/loginUser.js", loginUser); // Agrege el router de autenticación
 
 export default router;
