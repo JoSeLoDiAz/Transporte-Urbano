@@ -8,15 +8,17 @@ import adminRouter from "./administrador.js";
 import adminrutasRouter from "./administradorRutas.js";
 import vendedorRouter from "./vendedor.js";
 
+import { validarJWT } from '../middleware/validar-jwj.js';
+
 const router = express.Router();
 
 router.use("/rutas", rutaRouter);
 router.use("/clientes", clienteRouter);
 router.use("/tikets", tiketRouter);
 router.use("/vehiculos", vehiculoRouter);
-router.use("/admin", adminRouter);
-router.use("/adminRutas", adminrutasRouter);
+router.use("/admin", validarJWT, adminRouter);
+router.use("/adminRutas",validarJWT, adminrutasRouter);
 router.use("/conductores", conductorRouter);
-router.use("/vendedores", vendedorRouter);
+router.use("/vendedores",validarJWT, vendedorRouter);
 
 export default router;
