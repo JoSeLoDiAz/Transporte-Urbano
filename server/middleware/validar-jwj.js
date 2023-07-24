@@ -1,57 +1,40 @@
-import jwt from "jsonwebtoken"
-import Holder from "../models/holder.js";
-
-const generarJWT = (uid) => {
-    return new Promise((resolve, reject) => {
-        const payload = { uid };
-        jwt.sign(payload, process.env.SECRETORPRIVATEKEY, {
-            expiresIn: "4h"//4h
-        }, (err, token) => {
-            if (err) {
-                console.log(err);
-                reject("No se pudo generar el token")
-            } else {
-                resolve(token)
-            }
-        })
-    })
-}
+import jwt from "jsonwebtoken";
+import { generarJWT } from "../middleware/jwtUtils.js";
 
 const validarJWT = async (req, res, next) => {
     const token = req.header("x-token");
     if (!token) {
         return res.status(401).json({
-            msg: "No hay token en la peticion"
-        })
+            msg: "No hay token en la petición"
+        });
     }
 
     try {
-        const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY)
+        const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
 
-        let usuario = await Holder.findById(uid);
+        // Corregir el nombre de la función aquí
+        let usuario = await generarJWT(uid);
 
         if (!usuario) {
             return res.status(401).json({
-                msg: "Token no válido "//- usuario no existe DB
-            })
+                msg: "Token no válido" //- usuario no existe en la DB
+            });
         }
-
 
         if (usuario.estado == 0) {
             return res.status(401).json({
-                msg: "Token no válido " //- usuario con estado: false
-            })
+                msg: "Token no válido" //- usuario con estado: false
+            });
         }
-        req.holder=usuario
+        req.jwtUtils = usuario;
 
         next();
 
     } catch (error) {
         res.status(401).json({
-            msg: "Token no valido"
-        })
+            msg: "Token no válido"
+        });
     }
 }
 
-
-export { generarJWT, validarJWT }
+export { validarJWT };
