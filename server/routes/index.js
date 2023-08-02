@@ -12,14 +12,14 @@ import { validarJWT } from '../middleware/validar-jwt.js';
 
 const router = express.Router();
 
-router.use('/rutas', validarJWT, rutaRouter);
-router.use('/clientes', validarJWT, clienteRouter);
-router.use('/tikets', validarJWT, tiketRouter);
-router.use('/vehiculos', validarJWT, vehiculoRouter);
-router.use('/admin', validarJWT, adminRouter);
-router.use('/adminRutas', validarJWT, adminrutasRouter);
-router.use('/conductores', validarJWT, conductorRouter);
-router.use('/vendedores', validarJWT, vendedorRouter);
+router.use('/rutas',  rutaRouter);
+router.use('/clientes',  clienteRouter);
+router.use('/tikets',  tiketRouter);
+router.use('/vehiculos',  vehiculoRouter);
+router.use('/admin',  adminRouter);
+router.use('/adminRutas',  adminrutasRouter);
+router.use('/conductores',  conductorRouter);
+router.use('/vendedores',  vendedorRouter);
 
 router.use('/loginUser',  loginUserRouter);
 
