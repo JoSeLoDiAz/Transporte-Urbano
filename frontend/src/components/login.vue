@@ -67,9 +67,30 @@
   </div>
 </template>
   
-<script setup >
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
 
+const email = ref('');
+const password = ref('');
+const router = useRouter();
 
+// Función para manejar el inicio de sesión
+const login = () => {
+  // Realiza la solicitud de inicio de sesión
+  axios.post('/loginUser', { email: email.value, password: password.value })
+    .then(response => {
+      const token = response.data.token;
+      // Aquí debes almacenar el token en tu store de autenticación o en otro lugar
+      // Puedes usar el enrutador para redirigir al usuario a la página de inicio
+      router.push('/inicio');
+    })
+    .catch(error => {
+      // Manejo de errores
+      console.error('Error al iniciar sesión:', error);
+    });
+};
 </script>
 
 <style scoped>
