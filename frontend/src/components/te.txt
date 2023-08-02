@@ -1,0 +1,2 @@
+clientes, conductores,buses,rutas,vender ticket
+en todos vas una de editar
