@@ -10,7 +10,7 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+            <button class="btn btn-success" type="button" data-bs-toggle="modal"
               data-bs-target="#staticBackdrop">Nuevo</button>
 
           </div>
@@ -29,13 +29,15 @@
             <thead>
               <tr>
 
-                <th id="color" scope="col">origen</th>
-                <th id="color" scope="col">destino</th>
-                <th id="color" scope="col">hora_salida</th>
-                <th id="color" scope="col">fecha_salida</th>
-                <th id="color" scope="col">Tiempo_estimado_viaje</th>
-                <th id="color" scope="col">descripcion</th>
+                <th id="color" scope="col">Origen</th>
+                <th id="color" scope="col">Destino</th>
+                <th id="color" scope="col">Hora_salida</th>
+                <th id="color" scope="col">Fecha_salida</th>
+                <th id="color" scope="col">Tiempo_viaje</th>
+                <th id="color" scope="col">Descripcion</th>
+                <th id="color" scope="col">Estado</th>
                 <th id="color" scope="col">Opciones</th>
+                <th id="color" scope="col">Act / Des</th>
               </tr>
             </thead>
             <tbody>
@@ -48,9 +50,19 @@
                 <td>{{ array.tiempo_estimado_viaje }}</td>
                 <td>{{ array.descripcion }}</td>
                 <td>
+{{ array.estado }}
+
+                </td>
+                <td>
 
                   <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
                     data-bs-target="#staticBackdrop">Editar 📝</button>
+                </td>
+                <td>
+                  <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
                 </td>
 
               </tr>
@@ -100,7 +112,7 @@
               <label for="">Fecha_salida</label>
               <div class="input-group mb-3 ">
 
-                <input v-model="fecha_salida" type="text" class="form-control" placeholder="fecha de salida..."
+                <input v-model="fecha_salida" type="date" class="form-control" placeholder="fecha de salida..."
                   aria-label="Recipient's username" aria-describedby="button-addon2">
 
               </div>
@@ -123,7 +135,7 @@
             </div>
             <div class="modal-footer ">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary" @click="guardarRuta"  >Guardar</button>
+              <button type="button" class="btn btn-success" @click="guardarRuta"  >Guardar</button>
             </div>
           </div>
         </div>
@@ -205,5 +217,83 @@ onMounted(() => {
 <style scoped>
 #color{
 background-color: rgb(254, 183, 3);
+}
+
+/* The switch - the box around the slider */
+.switch {
+  /* Variables */
+  --switch_width: 2em;
+  --switch_height: 1em;
+  --thumb_color: #e8e8e8;
+  --track_color: #ff0101;
+  --track_active_color: #15ff00;
+  --outline_color: #000;
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: var(--switch_width);
+  height: var(--switch_height);
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  box-sizing: border-box;
+  border: 2px solid var(--outline_color);
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--track_color);
+  transition: .15s;
+  border-radius: var(--switch_height);
+}
+
+.slider:before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  height: var(--switch_height);
+  width: var(--switch_height);
+  border: 2px solid var(--outline_color);
+  border-radius: 100%;
+  left: -2px;
+  bottom: -2px;
+  background-color: var(--thumb_color);
+  transform: translateY(-0.2em);
+  box-shadow: 0 0.2em 0 var(--outline_color);
+  transition: .15s;
+}
+
+input:checked+.slider {
+  background-color: var(--track_active_color);
+}
+
+input:focus-visible+.slider {
+  box-shadow: 0 0 0 2px var(--track_active_color);
+}
+
+/* Raise thumb when hovered */
+input:hover+.slider:before {
+  transform: translateY(-0.3em);
+  box-shadow: 0 0.3em 0 var(--outline_color);
+}
+
+input:checked+.slider:before {
+  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.2em);
+}
+
+/* Raise thumb when hovered & checked */
+input:hover:checked+.slider:before {
+  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
+  box-shadow: 0 0.3em 0 var(--outline_color);
 }
 </style>

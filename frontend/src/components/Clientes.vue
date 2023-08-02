@@ -9,7 +9,7 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
               Nuevo
             </button>
           </div>
@@ -21,12 +21,15 @@
         <div class="col-sm-12">
           <table class="table table-striped table-hover">
             <thead>
-              <tr  >
-                <th id="color" scope="col">nombre</th>
-                <th id="color" scope="col">apellido</th>
-                <th id="color" scope="col">cc</th>
-                <th id="color" scope="col">telefono</th>
+              <tr>
+                <th id="color" scope="col">Nombre</th>
+                <th id="color" scope="col">Apellido</th>
+                <th id="color" scope="col">Cedula</th>
+                <th id="color" scope="col">Telefono</th>
+                <th id="color" scope="col">Estado</th>
+
                 <th id="color" scope="col">Opciones</th>
+                <th id="color" scope="col">Act / Des</th>
               </tr>
             </thead>
             <tbody>
@@ -35,11 +38,18 @@
                 <td>{{ cliente.apellido }}</td>
                 <td>{{ cliente.cc }}</td>
                 <td>{{ cliente.telefono }}</td>
+                <td> {{ cliente.estado }} </td>
                 <td>
                   <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                     @click="editar(cliente)">
                     Editar 📝
                   </button>
+                </td>
+                <td>
+                  <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                  </label>
                 </td>
               </tr>
             </tbody>
@@ -69,7 +79,7 @@
                   aria-label="Recipient's username" aria-describedby="button-addon2">
               </div>
 
-              <label for="">CC</label>
+              <label for="">Cedula</label>
               <div class="input-group mb-3">
                 <input v-model="cc" type="text" class="form-control" placeholder="Cédula..."
                   aria-label="Recipient's username" aria-describedby="button-addon2">
@@ -83,7 +93,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary" @click="guardarCliente">Guardar</button>
+              <button type="button" class="btn btn-success" @click="guardarCliente">Guardar</button>
             </div>
           </div>
         </div>
@@ -96,12 +106,14 @@
 import { useClientStore } from '../stores/clientes';
 import { ref, onMounted } from 'vue';
 
+
 let clientes = ref([]);
 const useclientes = useClientStore();
 let nombre = ref('');
 let apellido = ref('');
 let cc = ref('');
 let telefono = ref('');
+let estado = ref(true)
 
 async function pedirclientes() {
   try {
@@ -112,39 +124,30 @@ async function pedirclientes() {
   }
 }
 
-// function editar(cliente) {
-//   // Rellenar los campos del formulario con los datos del cliente seleccionado
-//   nombre.value = cliente.nombre;
-//   apellido.value = cliente.apellido;
-//   cc.value = cliente.cc;
-//   telefono.value = cliente.telefono;
-//   clienteSeleccionado.value = cliente;
-//   modoEdicion.value = true;
-// }
+
 
 const guardarCliente = async () => {
   try {
-    // Creamos un objeto con la información del nuevo cliente
+
     const nuevoCliente = {
       nombre: nombre.value,
       apellido: apellido.value,
       cc: cc.value,
       telefono: telefono.value,
+      estado: estado.value
     };
-
-    // Llamamos a la función addClient de la tienda para enviar la información al servidor
+    // Llamamos a la función addClient de la tienda para enviar la 
+    // información al servidor
     await useclientes.addClient(nuevoCliente);
 
-    // Una vez agregado el cliente correctamente, volvemos a pedir la lista actualizada
+    // lista actualizada
     pedirclientes();
 
-
-
-    // Limpiamos los campos del formulario después de guardar el cliente (opcional)
     nombre.value = '';
     apellido.value = '';
     cc.value = '';
     telefono.value = '';
+    estado.value = ''
   } catch (error) {
     console.log(error);
   }
@@ -156,8 +159,85 @@ onMounted(() => {
 </script>
 
 <style scoped>
+#color {
+  background-color: rgb(254, 183, 3);
+}
 
-#color{
-background-color: rgb(254, 183, 3);
+/* The switch - the box around the slider */
+.switch {
+  /* Variables */
+  --switch_width: 2em;
+  --switch_height: 1em;
+  --thumb_color: #e8e8e8;
+  --track_color: #ff0101;
+  --track_active_color: #15ff00;
+  --outline_color: #000;
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: var(--switch_width);
+  height: var(--switch_height);
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  box-sizing: border-box;
+  border: 2px solid var(--outline_color);
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--track_color);
+  transition: .15s;
+  border-radius: var(--switch_height);
+}
+
+.slider:before {
+  box-sizing: border-box;
+  position: absolute;
+  content: "";
+  height: var(--switch_height);
+  width: var(--switch_height);
+  border: 2px solid var(--outline_color);
+  border-radius: 100%;
+  left: -2px;
+  bottom: -2px;
+  background-color: var(--thumb_color);
+  transform: translateY(-0.2em);
+  box-shadow: 0 0.2em 0 var(--outline_color);
+  transition: .15s;
+}
+
+input:checked+.slider {
+  background-color: var(--track_active_color);
+}
+
+input:focus-visible+.slider {
+  box-shadow: 0 0 0 2px var(--track_active_color);
+}
+
+/* Raise thumb when hovered */
+input:hover+.slider:before {
+  transform: translateY(-0.3em);
+  box-shadow: 0 0.3em 0 var(--outline_color);
+}
+
+input:checked+.slider:before {
+  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.2em);
+}
+
+/* Raise thumb when hovered & checked */
+input:hover:checked+.slider:before {
+  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
+  box-shadow: 0 0.3em 0 var(--outline_color);
 }
 </style>

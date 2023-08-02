@@ -2,40 +2,73 @@
   <div>
 
     <div class="container-fluid">
+      <div class="row mt-2">
 
-      <div class="row">
+        
+
+      
+        <div class="col-sm-5">
+          <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <router-link to="/home">
+              <button type="button" class="btn btn-warning  border border-3">Clientes</button>
+            </router-link>
+            <router-link to="/hello">
+              <button type="button" class="btn btn-warning  border border-3">Conductor</button>
+            </router-link>
+            <router-link to="/cuatro">
+              <button type="button" class="btn btn-warning  border border-3">Rutas</button>
+            </router-link>
+            <router-link to="/vehiculo">
+              <button type="button" class="btn btn-warning  border border-3">vehiculos</button>
+            </router-link>
+            <router-link to="/tres">
+              <button type="button" class="btn btn-success border  border-3">Vender</button>
+            </router-link>
+
+
+          </div>
+
+        </div>
+        <div class="col-sm-7"></div>
+
+
+      </div>
+
+
+
+      <!-- <div class="row">
         <div class="col-sm-1  ">
           <router-link to="/home">
-            <button style="width: 100%; " class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark"
-              type="button">Clientes</button>
+            <button class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark" type="button">Clientes</button>
           </router-link>
         </div>
         <div class="col-sm-1">
           <router-link to="/hello">
-            <button style="width: 100%;" class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark"  
-              type="button">Conductor</button>
+            <button class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark" type="button">Conductor</button>
           </router-link>
         </div>
         <div class="col-sm-1">
           <router-link to="/cuatro">
-            <button style="width: 100%;" class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark"   type="button">Rutas</button>
+            <button class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark" type="button">Rutas</button>
           </router-link>
         </div>
         <div class="col-sm-1">
           <router-link to="/vehiculo">
-            <button style="width: 100%;" class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark btn rounded-4 rounded-top-4 border-3 "   type="button">vehiculo</button>
+            <button
+              class="btn btn-warning rounded-4 rounded-top-4 border-3 border-dark btn rounded-4 rounded-top-4 border-3 "
+              type="button">vehiculo</button>
           </router-link>
         </div>
         <div class="col-sm-1">
           <router-link to="/tres">
-            <button style="width: 100%" class="btn btn-success rounded-4  border-dark rounded-top-4 border-3  " type="button">Vender</button>
+            <button class="btn btn-success rounded-4  border-dark rounded-top-4 border-3  " type="button">Vender</button>
           </router-link>
         </div>
-        
+
         <div class="col-sm-7">
 
         </div>
-      </div>
+      </div> -->
 
 
       <div class="row">
