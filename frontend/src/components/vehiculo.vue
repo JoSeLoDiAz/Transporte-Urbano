@@ -170,7 +170,7 @@
 </template>
   
 <script setup>
-import { useVehiculosStore } from '../../stores/vehiculos';
+import { useVehiculosStore } from '../stores/vehiculos';
 import { ref, onMounted } from 'vue';
 
 const vehiculosStore = useVehiculosStore();

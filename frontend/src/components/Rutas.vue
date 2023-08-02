@@ -139,7 +139,7 @@
 </template>
 
 <script setup>
-import { useRutasStore } from '../../stores/rutas';
+import { useRutasStore } from '../stores/rutas';
 import { ref, onMounted } from 'vue';
 
 

@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import { useClientStore } from '../../stores/clientes';
+import { useClientStore } from '../stores/clientes';
 import { ref, onMounted } from 'vue';
 
 let clientes = ref([]);

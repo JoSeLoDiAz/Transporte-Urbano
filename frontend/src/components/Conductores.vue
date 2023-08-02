@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import { useConductorStore } from '../../stores/conductores'
+import { useConductorStore } from '../stores/conductores'
 import { ref, onMounted } from 'vue';
 
 
