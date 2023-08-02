@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
   obtenerRutas,
   obtenerRuta,
@@ -26,7 +27,7 @@ router.post('/', [
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
-  check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
+  check("descripcion", "La descripción es un campo requerido").not().isEmpty(), validarResultados
 ], crearRuta);
 
 router.put('/:id', [
@@ -35,7 +36,7 @@ router.put('/:id', [
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
-  check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
+  check("descripcion", "La descripción es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarRuta);
 
 router.delete('/:id', eliminarRuta);

@@ -13,7 +13,7 @@ const tiketSchema = new mongoose.Schema(
     valor_puesto: { type: Number },
     ruta: { type: mongoose.Schema.Types.ObjectId, ref: "Ruta" },
     fecha_tiket: { type: Date, default: Date.now },
-    estado: { type: String, enum: ["activo", "cancelado"], default: "activo" }
+    estado: { type: Boolean, default: true }
   },
   { collection: "Ticketes" }
 );

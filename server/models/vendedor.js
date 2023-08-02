@@ -7,6 +7,7 @@
         telefono: { type: String, required: true },
         email: { type: String, required: true },
         password: { type: String, required: true },
+        estado: { type: Boolean , default: true}
     },
         { collection: 'Vendedores' });
     // Antes de guardar el vendedor, hashear la password

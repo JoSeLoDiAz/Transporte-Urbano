@@ -26,7 +26,7 @@ export const crearAdministrador = async (req, res) => {
   } catch (error) {
     if (error.code === 11000) {
       // Manejar el error de duplicados
-      res.status(400).json({ error: 'Ya existe un administrador registrado con el mismo correo.' });
+      res.status(400).json({ error: 'Ya existe un administrador registrado con el mismo email.' });
     } else {
       // Manejar otros errores
       res.status(500).json({ error: 'No se pudo crear el administrador.' });
@@ -35,7 +35,7 @@ export const crearAdministrador = async (req, res) => {
 };
 
 export const editarAdministrador = async (req, res) => {
-  const { nombre, correo, password } = req.body;
+  const { nombre, email, password } = req.body;
   try {
     const administradorExistente = await Administrador.findOne();
     if (!administradorExistente) {
@@ -43,7 +43,7 @@ export const editarAdministrador = async (req, res) => {
     }
     
     administradorExistente.nombre = nombre;
-    administradorExistente.correo = correo;
+    administradorExistente.email = email;
     administradorExistente.password = password;
     
     const administradorActualizado = await administradorExistente.save();
@@ -51,7 +51,7 @@ export const editarAdministrador = async (req, res) => {
   } catch (error) {
     if (error.code === 11000) {
       // Manejar el error de duplicados
-      res.status(400).json({ error: 'Ya existe un administrador registrado con el mismo correo.' });
+      res.status(400).json({ error: 'Ya existe un administrador registrado con el mismo email.' });
     } else {
       // Manejar otros errores
       res.status(500).json({ error: 'No se pudo actualizar el administrador.' });

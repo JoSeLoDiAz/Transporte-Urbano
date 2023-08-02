@@ -9,7 +9,7 @@ import vehiculo from "../components/vehiculo.vue"
 export const routes = [
     { path: "/", component: Login },
     {
-        path: "/menu", component: Header,
+        path: "/header", component: Header,
         children: [
             { path: "/home", component: Home },
             { path: "/hello", component: Hello },

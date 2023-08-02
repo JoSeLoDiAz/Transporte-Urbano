@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
   obtenerConductores,
   obtenerConductor,
@@ -7,6 +8,7 @@ import {
   actualizarConductor,
   eliminarConductor
 } from '../controllers/conductor.js';
+
 
 const router = express.Router();
 
@@ -21,7 +23,7 @@ router.post('/', [
   check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
   check("direccion", "La dirección es un campo requerido").not().isEmpty(),
   check("clase_pase", "La clase de pase es un campo requerido").not().isEmpty(),
-  check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty()
+  check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty(), validarResultados
 ], crearConductor);
 
 router.put('/:id', [
@@ -31,7 +33,7 @@ router.put('/:id', [
   check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
   check("direccion", "La dirección es un campo requerido").not().isEmpty(),
   check("clase_pase", "La clase de pase es un campo requerido").not().isEmpty(),
-  check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty()
+  check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarConductor);
 
 router.delete('/:id', eliminarConductor);

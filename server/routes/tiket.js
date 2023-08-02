@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
   obtenerTickets,
   obtenerTicket,
@@ -28,7 +29,7 @@ router.post('/', [
   check("valor_puesto", "El valor del puesto debe ser un número").isNumeric(),
   check("ruta", "La ruta es un campo requerido").not().isEmpty(),
   check("fecha_tiket", "La fecha del ticket es un campo requerido").not().isEmpty().isDate(),
-  check("estado", "El estado del ticket es un campo requerido").not().isEmpty().isIn(["activo", "cancelado"])
+  check("estado", "El estado del ticket es un campo requerido").not().isEmpty().isIn(["activo", "cancelado"]), validarResultados
 ], crearTicket);
 
 router.put('/:id', [
@@ -45,7 +46,7 @@ router.put('/:id', [
   check("valor_puesto", "El valor del puesto debe ser un número").isNumeric(),
   check("ruta", "La ruta es un campo requerido").not().isEmpty(),
   check("fecha_tiket", "La fecha del ticket es un campo requerido").not().isEmpty().isDate(),
-  check("estado", "El estado del ticket es un campo requerido").not().isEmpty().isIn(["activo", "cancelado"])
+  check("estado", "El estado del ticket es un campo requerido").not().isEmpty().isIn(["activo", "cancelado"]), validarResultados
 ], actualizarTicket);
 
 router.delete('/:id', eliminarTicket);

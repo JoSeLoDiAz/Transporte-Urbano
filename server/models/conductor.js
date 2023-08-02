@@ -8,6 +8,7 @@ const conductorSchema = new mongoose.Schema(
     direccion: { type: String },
     clase_pase: { type: String },
     vigencia_pase: { type: Date },
+    estado: { type: Boolean, default: true }
   },
   {
     collection: 'Conductores' // Especifica el nombre de la colección en la base de datos

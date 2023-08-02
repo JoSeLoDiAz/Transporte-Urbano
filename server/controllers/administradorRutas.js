@@ -33,7 +33,7 @@ export const crearAdministradorRutas = async (req, res) => {
 // Editar el administrador de rutas
 export const editarAdministradorRutas = async (req, res) => {
   try {
-    const { nombre, correo, password } = req.body;
+    const { nombre, email, password } = req.body;
     const administradorRutas = await AdministradorRutas.findOne();
 
     if (!administradorRutas) {
@@ -41,7 +41,7 @@ export const editarAdministradorRutas = async (req, res) => {
     }
 
     administradorRutas.nombre = nombre;
-    administradorRutas.correo = correo;
+    administradorRutas.email = email;
     administradorRutas.password = password;
 
     const administradorRutasActualizado = await administradorRutas.save();

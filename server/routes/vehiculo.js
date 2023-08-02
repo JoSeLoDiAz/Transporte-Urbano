@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
   obtenerVehiculos,
   obtenerVehiculo,
@@ -26,7 +27,7 @@ router.post('/', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
 ], crearVehiculo);
 
 router.put('/:id', [
@@ -39,19 +40,19 @@ router.put('/:id', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarVehiculo);
 
 router.delete('/:id', eliminarVehiculo);
 
 // Ruta para actualizar la fecha de vencimiento del seguro de un vehículo
 router.put('/:id/seguro', [
-  check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate()
+  check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(), validarResultados
 ], actualizarVencimientoSeguro);
 
 // Ruta para actualizar el número de licencia de tránsito de un vehículo
 router.put('/:id/licencia', [
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarNumeroLicenciaTransito);
 
 export default router;
