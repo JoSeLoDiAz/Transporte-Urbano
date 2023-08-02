@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
     getVendedores,
     getVendedor,
@@ -20,7 +21,7 @@ router.post('/', [
     check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
     check("email", "El email es un campo requerido").not().isEmpty(),
     check("email", "El email debe ser válido").isEmail(),
-    check("password", "La contraseña es un campo requerido").not().isEmpty()
+    check("password", "La contraseña es un campo requerido").not().isEmpty(), validarResultados
 ], crearVendedor);
 
 router.put('/:id', [
@@ -29,7 +30,7 @@ router.put('/:id', [
     check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
     check("email", "El email es un campo requerido").not().isEmpty(),
     check("email", "El email debe ser válido").isEmail(),
-    check("password", "La contraseña es un campo requerido").not().isEmpty()
+    check("password", "La contraseña es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarVendedor);
 
 router.delete('/:id', eliminarVendedor);

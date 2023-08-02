@@ -4,7 +4,8 @@ const clienteSchema = new mongoose.Schema({
   nombre: { type: String },
   apellido: { type: String },
   cc: { type: String },
-  telefono: { type: String }
+  telefono: { type: String },
+  estado: { type: Boolean, default: true }
 },
   { collection: 'Clientes' });
 

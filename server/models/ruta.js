@@ -8,6 +8,7 @@ const rutaSchema = new mongoose.Schema(
     fecha_salida: { type: Date },
     tiempo_estimado_viaje: { type: String },
     descripcion: { type: String },
+    estado: { type: Boolean , default: true}
   },
   {
     collection: 'Rutas', // Especifica el nombre de la colección en la base de datos

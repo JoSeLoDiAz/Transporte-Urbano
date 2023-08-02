@@ -1,5 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
 import {
   getClientes,
   getCliente,
@@ -7,6 +8,7 @@ import {
   actualizarCliente,
   eliminarCliente
 } from '../controllers/cliente.js';
+
 
 const router = express.Router();
 
@@ -19,7 +21,7 @@ router.post('/', [
   check("cc", "El número de cédula es un campo requerido").not().isEmpty(),
   check("cc").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("cc").isLength({ max: 15 }).withMessage("El número de cédula debe tener máximo 15 dígitos"),
-  check("telefono", "El teléfono es un campo requerido").not().isEmpty()
+  check("telefono", "El teléfono es un campo requerido").not().isEmpty(), validarResultados
 ], crearCliente);
 router.put('/:id', [
   check("nombre", "El nombre es un campo requerido").not().isEmpty(),
@@ -27,7 +29,7 @@ router.put('/:id', [
   check("cc", "El número de cédula es un campo requerido").not().isEmpty(),
   check("cc").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("cc").isLength({ max: 15 }).withMessage("El número de cédula debe tener máximo 15 dígitos"),
-  check("telefono", "El teléfono es un campo requerido").not().isEmpty()
+  check("telefono", "El teléfono es un campo requerido").not().isEmpty(), validarResultados
 ], actualizarCliente);
 router.delete('/:id', eliminarCliente);
 

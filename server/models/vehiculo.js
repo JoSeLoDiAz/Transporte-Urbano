@@ -11,6 +11,7 @@ const vehiculoSchema = new mongoose.Schema(
     modelo: { type: String },
     fecha_vencimiento_seguro: { type: Date },
     numero_licencia_transito: { type: String },
+    estado: { type: Boolean, default: true }
   },
   {
     collection: 'Vehiculos' // Especifica el nombre de la colección en la base de datos
