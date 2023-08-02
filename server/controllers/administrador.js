@@ -34,6 +34,30 @@ export const crearAdministrador = async (req, res) => {
   }
 };
 
+export const editarAdministrador = async (req, res) => {
+  const { nombre, correo, password } = req.body;
+  try {
+    const administradorExistente = await Administrador.findOne();
+    if (!administradorExistente) {
+      return res.status(404).json({ error: 'Administrador no encontrado.' });
+    }
+    
+    administradorExistente.nombre = nombre;
+    administradorExistente.correo = correo;
+    administradorExistente.password = password;
+    
+    const administradorActualizado = await administradorExistente.save();
+    res.status(200).json(administradorActualizado);
+  } catch (error) {
+    if (error.code === 11000) {
+      // Manejar el error de duplicados
+      res.status(400).json({ error: 'Ya existe un administrador registrado con el mismo correo.' });
+    } else {
+      // Manejar otros errores
+      res.status(500).json({ error: 'No se pudo actualizar el administrador.' });
+    }
+  }
+};
 
 export const eliminarAdministrador = async (req, res) => {
   try {

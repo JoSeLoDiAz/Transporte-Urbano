@@ -1,5 +1,8 @@
 import Cliente from '../models/cliente.js';
 
+
+
+// Obtener todos los clientes
 export const getClientes = async (req, res) => {
   try {
     const clientes = await Cliente.find();
@@ -9,6 +12,7 @@ export const getClientes = async (req, res) => {
   }
 };
 
+// Obtener un cliente por su ID
 export const getCliente = async (req, res) => {
   try {
     const { id } = req.params;
@@ -23,6 +27,7 @@ export const getCliente = async (req, res) => {
   }
 };
 
+// Crear un nuevo cliente
 export const crearCliente = async (req, res) => {
   try {
     const nuevoCliente = new Cliente(req.body);
@@ -33,6 +38,7 @@ export const crearCliente = async (req, res) => {
   }
 };
 
+// Actualizar un cliente existente
 export const actualizarCliente = async (req, res) => {
   try {
     const { id } = req.params;
@@ -47,6 +53,7 @@ export const actualizarCliente = async (req, res) => {
   }
 };
 
+// Eliminar un cliente
 export const eliminarCliente = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,3 +67,4 @@ export const eliminarCliente = async (req, res) => {
     res.status(500).json({ error: 'No se pudo eliminar el cliente.' });
   }
 };
+

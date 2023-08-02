@@ -1,4 +1,5 @@
 import Ruta from '../models/ruta.js';
+import { check, validationResult } from 'express-validator';
 
 // Obtener todas las rutas
 export const obtenerRutas = async (req, res) => {
@@ -28,6 +29,24 @@ export const obtenerRuta = async (req, res) => {
 // Crear una nueva ruta
 export const crearRuta = async (req, res) => {
   try {
+    // Definir las reglas de validación utilizando express-validator
+    const validarCrearRuta = [
+      check('nombre').notEmpty().withMessage('El nombre de la ruta es obligatorio'),
+      check('descripcion').notEmpty().withMessage('La descripción de la ruta es obligatoria'),
+      check('ciudad_origen').notEmpty().withMessage('La ciudad de origen es obligatoria'),
+      check('ciudad_destino').notEmpty().withMessage('La ciudad de destino es obligatoria'),
+      check('distancia').notEmpty().withMessage('La distancia de la ruta es obligatoria').isNumeric(),
+    ];
+
+    // Ejecutar las validaciones
+    await Promise.all(validarCrearRuta.map(validation => validation.run(req)));
+
+    // Manejar los resultados de las validaciones
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({ errores: errores.array() });
+    }
+
     const nuevaRuta = new Ruta(req.body);
     const rutaCreada = await nuevaRuta.save();
     res.status(201).json(rutaCreada);

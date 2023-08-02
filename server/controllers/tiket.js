@@ -1,6 +1,22 @@
 import Tiket from '../models/tiket.js';
 import Vehiculo from '../models/vehiculo.js';
 import Cliente from '../models/cliente.js';
+import { check, validationResult } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
+
+// Define las reglas de validación utilizando express-validator
+const validarCrearTicket = [
+  check('numero_autobus').notEmpty().withMessage('El número de autobús es obligatorio'),
+  check('ccCliente').notEmpty().withMessage('La cédula del cliente es obligatoria'),
+  check('origen').notEmpty().withMessage('El origen es obligatorio'),
+  check('destino').notEmpty().withMessage('El destino es obligatorio'),
+  check('numero_de_puesto').notEmpty().withMessage('El número de puesto es obligatorio').isInt(),
+  check('valor_puesto').notEmpty().withMessage('El valor del puesto es obligatorio').isNumeric(),
+  check('ruta').notEmpty().withMessage('El ID de ruta es obligatorio'),
+];
+
+// Middleware para validar los resultados de las validaciones al crear un ticket
+const validarResultadosCrearTicket = validarResultados;
 
 // Obtener todos los tickets
 export const obtenerTickets = async (req, res) => {
@@ -99,4 +115,9 @@ export const eliminarTicket = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'No se pudo eliminar el ticket.' });
   }
+};
+
+export {
+  validarCrearTicket,
+  validarResultadosCrearTicket,
 };

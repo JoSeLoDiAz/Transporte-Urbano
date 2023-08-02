@@ -4,6 +4,7 @@ const tiketSchema = new mongoose.Schema(
   {
     nombre_compania: { type: String },
     numero_autobus: { type: String },
+    cedula_cliente:{typeof: String },
     nombre_completo_cliente: { type: String },
     nombre_conductor: { type: String },
     origen: { type: String },

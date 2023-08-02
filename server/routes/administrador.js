@@ -2,6 +2,7 @@ import express from 'express';
 import {
     obtenerAdministrador,
     crearAdministrador,
+    editarAdministrador,
     eliminarAdministrador
 } from '../controllers/administrador.js';
 
@@ -12,6 +13,9 @@ router.get('/', obtenerAdministrador);
 
 // Ruta para crear el administrador
 router.post('/', crearAdministrador);
+
+// Ruta para editar el administrador
+router.put('/', editarAdministrador);
 
 // Ruta para eliminar el administrador
 router.delete('/', eliminarAdministrador);

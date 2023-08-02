@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs'; // Importar bcryptjs aquí
 
 const administradorRutasSchema = new mongoose.Schema(
   {
@@ -6,33 +7,27 @@ const administradorRutasSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    correo: {
+    email: {
       type: String,
       required: true,
       unique: true
     },
-    contraseña: {
+    password: {
       type: String,
       required: true
-    },
-    rutasAsignadas: [
-      {
-        ruta: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Ruta',
-          required: true
-        },
-        vehiculo: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Vehiculo',
-          required: true
-        },
-        horarios: [String]
-      }
-    ]
+    }
   },
   { collection: 'AdminRutas' } // Especifica el nombre de la colección en la base de datos
 );
+
+// Antes de guardar el administrador de rutas, hashear la password
+administradorRutasSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
+});
 
 const AdministradorRutas = mongoose.model('AdministradorRutas', administradorRutasSchema);
 

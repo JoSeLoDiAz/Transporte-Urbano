@@ -1,5 +1,5 @@
 {
-  "name": "transporte",
+  "name": "rutas",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,12 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@quasar/extras": "^1.15.11",
     "axios": "^1.4.0",
-    "pinia": "^2.1.4",
-    "vue": "^3.3.4"
+    "pinia": "^2.1.6",
+    "quasar": "^2.11.7",
+    "vue": "^3.2.45",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
-    "vite": "^4.4.0"
+    "@quasar/vite-plugin": "^1.3.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "sass": "^1.32.12",
+    "vite": "^4.1.0"
   }
 }

@@ -30,6 +30,27 @@ export const crearAdministradorRutas = async (req, res) => {
   }
 };
 
+// Editar el administrador de rutas
+export const editarAdministradorRutas = async (req, res) => {
+  try {
+    const { nombre, correo, password } = req.body;
+    const administradorRutas = await AdministradorRutas.findOne();
+
+    if (!administradorRutas) {
+      return res.status(404).json({ error: 'Administrador de Rutas no encontrado.' });
+    }
+
+    administradorRutas.nombre = nombre;
+    administradorRutas.correo = correo;
+    administradorRutas.password = password;
+
+    const administradorRutasActualizado = await administradorRutas.save();
+    res.status(200).json(administradorRutasActualizado);
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo editar el administrador de rutas.' });
+  }
+};
+
 // Eliminar el administrador de rutas
 export const eliminarAdministradorRutas = async (req, res) => {
   try {

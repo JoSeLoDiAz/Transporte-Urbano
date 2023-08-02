@@ -1,4 +1,18 @@
 import Vehiculo from '../models/vehiculo.js';
+import { check, validationResult } from 'express-validator';
+import { validarResultados } from '../middleware/validaciones.js';
+
+// Define las reglas de validación utilizando express-validator
+const validarCrearVehiculo = [
+  check('nombre_compania').notEmpty().withMessage('El nombre de la compañía es obligatorio'),
+  check('numero_autobus').notEmpty().withMessage('El número de autobús es obligatorio'),
+  check('nombre_conductor').notEmpty().withMessage('El nombre del conductor es obligatorio'),
+  check('capacidad').notEmpty().withMessage('La capacidad del vehículo es obligatoria').isInt(),
+  check('tipo').notEmpty().withMessage('El tipo de vehículo es obligatorio'),
+];
+
+// Middleware para validar los resultados de las validaciones al crear un vehículo
+const validarResultadosCrearVehiculo = validarResultados;
 
 export const obtenerVehiculos = async (req, res) => {
   try {
@@ -25,8 +39,16 @@ export const obtenerVehiculo = async (req, res) => {
 
 export const crearVehiculo = async (req, res) => {
   try {
+    // Validar los resultados de las validaciones
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    // Crear el nuevo vehículo
     const nuevoVehiculo = new Vehiculo(req.body);
     const vehiculoCreado = await nuevoVehiculo.save();
+
     res.status(201).json(vehiculoCreado);
   } catch (error) {
     res.status(500).json({ error: 'No se pudo crear el vehículo.' });

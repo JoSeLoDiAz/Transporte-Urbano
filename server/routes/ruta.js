@@ -1,4 +1,5 @@
 import express from 'express';
+import { check } from 'express-validator';
 import {
   obtenerRutas,
   obtenerRuta,
@@ -18,8 +19,25 @@ const router = express.Router();
 // Rutas para las rutas
 router.get('/', obtenerRutas);
 router.get('/:id', obtenerRuta);
-router.post('/', crearRuta);
-router.put('/:id', actualizarRuta);
+
+router.post('/', [
+  check("origen", "El origen es un campo requerido").not().isEmpty(),
+  check("destino", "El destino es un campo requerido").not().isEmpty(),
+  check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
+  check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
+  check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
+  check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
+], crearRuta);
+
+router.put('/:id', [
+  check("origen", "El origen es un campo requerido").not().isEmpty(),
+  check("destino", "El destino es un campo requerido").not().isEmpty(),
+  check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
+  check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
+  check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
+  check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
+], actualizarRuta);
+
 router.delete('/:id', eliminarRuta);
 
 // Rutas para los horarios de una ruta específica
