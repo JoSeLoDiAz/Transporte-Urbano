@@ -1,22 +1,8 @@
 import Tiket from '../models/tiket.js';
 import Vehiculo from '../models/vehiculo.js';
 import Cliente from '../models/cliente.js';
-import { check, validationResult } from 'express-validator';
-import { validarResultados } from '../middleware/validaciones.js';
-
-// Define las reglas de validación utilizando express-validator
-const validarCrearTicket = [
-  check('numero_autobus').notEmpty().withMessage('El número de autobús es obligatorio'),
-  check('ccCliente').notEmpty().withMessage('La cédula del cliente es obligatoria'),
-  check('origen').notEmpty().withMessage('El origen es obligatorio'),
-  check('destino').notEmpty().withMessage('El destino es obligatorio'),
-  check('numero_de_puesto').notEmpty().withMessage('El número de puesto es obligatorio').isInt(),
-  check('valor_puesto').notEmpty().withMessage('El valor del puesto es obligatorio').isNumeric(),
-  check('ruta').notEmpty().withMessage('El ID de ruta es obligatorio'),
-];
-
-// Middleware para validar los resultados de las validaciones al crear un ticket
-const validarResultadosCrearTicket = validarResultados;
+import Ruta from '../models/ruta.js';
+import Counter, { getNextSequenceValue } from '../models/counter.js';
 
 // Obtener todos los tickets
 export const obtenerTickets = async (req, res) => {
@@ -48,37 +34,45 @@ export const crearTicket = async (req, res) => {
   try {
     const { numero_autobus, ccCliente } = req.body;
 
-    // Buscar el vehículo por el número de autobús en la base de datos
     const vehiculo = await Vehiculo.findOne({ numero_autobus });
-
     if (!vehiculo) {
       return res.status(404).json({ error: 'Vehículo no encontrado.' });
     }
+    // Buscar la ruta utilizando el origen y el destino
+    const ruta = await Ruta.findOne({ origen, destino });
+    if (!ruta) {
+      return res.status(404).json({ error: 'Ruta no encontrada.' });
+    }
 
-    // Buscar al cliente por su número de cédula en la base de datos
     const cliente = await Cliente.findOne({ cc: ccCliente });
-
     if (!cliente) {
       return res.status(404).json({ error: 'Cliente no encontrado.' });
     }
 
-    // Si encontramos el vehículo y el cliente, creamos el objeto Tiket con toda la información
+    // Obtener el siguiente valor de la secuencia
+    const counter = await Counter.findOneAndUpdate(
+      { _id: "num_tiket_sequence" },
+      { $inc: { sequence_value: 1 } },
+      { new: true }
+    );
+    const numTiket = await getNextSequenceValue("num_tiket_sequence");
+
     const nuevoTicket = new Tiket({
       nombre_compania: vehiculo.nombre_compania,
       numero_autobus: vehiculo.numero_autobus,
       nombre_completo_cliente: `${cliente.nombre} ${cliente.apellido}`,
       cedula_cliente: ccCliente,
       nombre_conductor: vehiculo.nombre_conductor,
-      origen: req.body.origen,
-      destino: req.body.destino,
+      origen,
+      destino,
       numero_de_puesto: req.body.numero_de_puesto,
       valor_puesto: req.body.valor_puesto,
-      ruta: req.body.ruta,
+      ruta: `${ruta.origen} a ${ruta.destino}`,
+      num_tiket: numTiket,
       fecha_tiket: new Date(),
-      estado: 'activo',
+      estado: true
     });
 
-    // Guardar el nuevo ticket en la base de datos
     const ticketCreado = await nuevoTicket.save();
 
     res.status(201).json(ticketCreado);
@@ -117,7 +111,3 @@ export const eliminarTicket = async (req, res) => {
   }
 };
 
-export {
-  validarCrearTicket,
-  validarResultadosCrearTicket,
-};

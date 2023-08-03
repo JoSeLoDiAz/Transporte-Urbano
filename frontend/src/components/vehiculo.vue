@@ -5,13 +5,15 @@
 
             <div class="row">
                 <div class="col-sm-6">
-                    <h5>vehiculo</h5>
+                    <h5 id="bus"><i class="fas fa-bus"></i>
+                        Vehiculo</h5>
                 </div>
                 <div class="col-sm-3"></div>
                 <div class="col-sm-2 mt-2">
                     <div class="d-grid gap-2">
                         <button class="btn btn-success" type="button" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop">Nuevo</button>
+                            data-bs-target="#staticBackdrop">
+                            <i class="fas fa-plus"></i> Nuevo</button>
 
                     </div>
 
@@ -55,22 +57,23 @@
                                 <td>{{ array.modelo }}</td>
                                 <td>{{ array.fecha_vencimiento_seguro }}</td>
                                 <td>{{ array.numero_licencia_transito }}</td>
-                                <td>
+                                <td :class="{ 'activo': array.estado, 'inactivo': !array.estado }">
 
-                                    {{ array.estado }}
+                                    {{ array.estado ? 'Activo' : 'Inactivo' }}
                                 </td>
 
                                 <td>
-
-                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                        data-bs-target="#staticBackdrop">Editar 📝</button>
+                                    <button id="editar" type="button" class="btn " data-bs-toggle="modal"
+                                        data-bs-target="#staticBackdrop">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                    </button>
                                 </td>
                                 <td>
-                  <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                  </label>
-                </td>
+                                    <label class="switch">
+                                        <input v-model="array.estado" :checked="array.estado" type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
 
                             </tr>
 
@@ -164,6 +167,9 @@
 
                         </div>
                         <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                A simple primary alert—check it out!
+                            </div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                             <button type="button" class="btn btn-success" @click="guardarvehiculo">Guardar</button>
                         </div>
@@ -187,6 +193,7 @@ import { ref, onMounted } from 'vue';
 
 const vehiculosStore = useVehiculosStore();
 const vehiculos = ref([]);
+let estado = ref()
 let numero_autobus = ref('');
 let nombre_conductor = ref('');
 let cedula_conductor = ref('');
@@ -217,7 +224,8 @@ const guardarvehiculo = async () => {
             marca: marca.value,
             modelo: modelo.value,
             fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
-            numero_licencia_transito: numero_licencia_transito.value
+            numero_licencia_transito: numero_licencia_transito.value,
+            estado: estado.value
         };
         await vehiculosStore.addvehiculo(nuevovehiculo)
         pedirvehiculos()
@@ -230,6 +238,7 @@ const guardarvehiculo = async () => {
         modelo.value = '';
         fecha_vencimiento_seguro.value = '';
         numero_licencia_transito.value = '';
+        estado = ''
 
     } catch (error) {
         console.log(error);
@@ -247,82 +256,107 @@ onMounted(() => {
     background-color: rgb(254, 183, 3);
 }
 
+#bus {
+    font-size: 50px;
+}
+
 /* The switch - the box around the slider */
 .switch {
-  /* Variables */
-  --switch_width: 2em;
-  --switch_height: 1em;
-  --thumb_color: #e8e8e8;
-  --track_color: #ff0101;
-  --track_active_color: #15ff00;
-  --outline_color: #000;
-  font-size: 17px;
-  position: relative;
-  display: inline-block;
-  width: var(--switch_width);
-  height: var(--switch_height);
+    /* Variables */
+    --switch_width: 2em;
+    --switch_height: 1em;
+    --thumb_color: #e8e8e8;
+    --track_color: #15ff00;
+    --track_active_color: red;
+    --outline_color: #000;
+    font-size: 17px;
+    position: relative;
+    display: inline-block;
+    width: var(--switch_width);
+    height: var(--switch_height);
+}
+
+.fa-solid.fa-user-pen {
+    font-size: 22px;
+    /* Ajusta el tamaño de la fuente según lo necesites */
+}
+
+.container-fluid {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 /* Hide default HTML checkbox */
 .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 /* The slider */
 .slider {
-  box-sizing: border-box;
-  border: 2px solid var(--outline_color);
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--track_color);
-  transition: .15s;
-  border-radius: var(--switch_height);
+    box-sizing: border-box;
+    border: 2px solid var(--outline_color);
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--track_color);
+    transition: .15s;
+    border-radius: var(--switch_height);
+}
+
+.activo {
+    color: #15ff00;
+    /* Texto verde cuando está activado */
+
+
+}
+
+.inactivo {
+    color: #ff0101;
+    /* Texto rojo cuando está desactivado */
+
 }
 
 .slider:before {
-  box-sizing: border-box;
-  position: absolute;
-  content: "";
-  height: var(--switch_height);
-  width: var(--switch_height);
-  border: 2px solid var(--outline_color);
-  border-radius: 100%;
-  left: -2px;
-  bottom: -2px;
-  background-color: var(--thumb_color);
-  transform: translateY(-0.2em);
-  box-shadow: 0 0.2em 0 var(--outline_color);
-  transition: .15s;
+    box-sizing: border-box;
+    position: absolute;
+    content: "";
+    height: var(--switch_height);
+    width: var(--switch_height);
+    border: 2px solid var(--outline_color);
+    border-radius: 100%;
+    left: -2px;
+    bottom: -2px;
+    background-color: var(--thumb_color);
+    transform: translateY(-0.2em);
+    box-shadow: 0 0.2em 0 var(--outline_color);
+    transition: .15s;
 }
 
 input:checked+.slider {
-  background-color: var(--track_active_color);
+    background-color: var(--track_active_color);
 }
 
 input:focus-visible+.slider {
-  box-shadow: 0 0 0 2px var(--track_active_color);
+    box-shadow: 0 0 0 2px var(--track_active_color);
 }
 
 /* Raise thumb when hovered */
 input:hover+.slider:before {
-  transform: translateY(-0.3em);
-  box-shadow: 0 0.3em 0 var(--outline_color);
+    transform: translateY(-0.3em);
+    box-shadow: 0 0.3em 0 var(--outline_color);
 }
 
 input:checked+.slider:before {
-  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.2em);
+    transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.2em);
 }
 
 /* Raise thumb when hovered & checked */
 input:hover:checked+.slider:before {
-  transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
-  box-shadow: 0 0.3em 0 var(--outline_color);
-}
-</style>
+    transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
+    box-shadow: 0 0.3em 0 var(--outline_color);
+}</style>
   

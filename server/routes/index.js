@@ -17,7 +17,7 @@ router.use('/clientes',  clienteRouter);
 router.use('/tikets',  tiketRouter);
 router.use('/vehiculos',  vehiculoRouter);
 router.use('/admin',  adminRouter);
-router.use('/adminRutas',  adminrutasRouter);
+router.use('/adminutas',  adminrutasRouter);
 router.use('/conductores',  conductorRouter);
 router.use('/vendedores',  vendedorRouter);
 

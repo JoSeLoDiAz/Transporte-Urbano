@@ -5,13 +5,14 @@
 
       <div class="row">
         <div class="col-sm-6">
-          <h5>Rutas</h5>
+          <h5 id="ruta"><i class="fas fa-road"></i> Rutas</h5>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button" data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop">Nuevo</button>
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+
+              <i class="fas fa-plus"></i> Nuevo</button>
 
           </div>
 
@@ -49,18 +50,19 @@
                 <td>{{ array.fecha_salida }}</td>
                 <td>{{ array.tiempo_estimado_viaje }}</td>
                 <td>{{ array.descripcion }}</td>
-                <td>
-{{ array.estado }}
+                <td :class="{ 'activo': array.estado, 'inactivo': !array.estado }">
+                  {{ array.estado ? 'Activo' : 'Inactivo' }}
 
                 </td>
                 <td>
 
-                  <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop">Editar 📝</button>
+                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <i class="fa-solid fa-user-pen"></i>
+                  </button>
                 </td>
                 <td>
                   <label class="switch">
-                    <input type="checkbox">
+                    <input v-model="array.estado" :checked="array.estado" type="checkbox">
                     <span class="slider"></span>
                   </label>
                 </td>
@@ -134,8 +136,11 @@
 
             </div>
             <div class="modal-footer ">
+              <div class="alert alert-danger" role="alert">
+                A simple primary alert—check it out!
+              </div>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-success" @click="guardarRuta"  >Guardar</button>
+              <button type="button" class="btn btn-success" @click="guardarRuta">Guardar</button>
             </div>
           </div>
         </div>
@@ -156,7 +161,7 @@ import { ref, onMounted } from 'vue';
 
 
 let Rutas = ref([]);
-
+let estado = ref()
 let origen = ref('');
 let destino = ref('');
 let hora_salida = ref('');
@@ -185,7 +190,8 @@ const guardarRuta = async () => {
       hora_salida: hora_salida.value,
       fecha_salida: fecha_salida.value,
       tiempo_estimado_viaje: tiempo_estimado_viaje.value,
-      descripcion: descripcion.value
+      descripcion: descripcion.value,
+      estado: estado.value
     }
 
     await userutas.addRutas(nuevaRuta)
@@ -197,9 +203,10 @@ const guardarRuta = async () => {
     fecha_salida.value = ''
     tiempo_estimado_viaje.value = ''
     descripcion.value = ''
+    estado = ''
 
   } catch (error) {
-console.log(error);
+    console.log(error);
   }
 
 
@@ -215,8 +222,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#color{
-background-color: rgb(254, 183, 3);
+#color {
+  background-color: rgb(254, 183, 3);
+}
+
+.fa-solid.fa-user-pen {
+  font-size: 22px;
+  /* Ajusta el tamaño de la fuente según lo necesites */
 }
 
 /* The switch - the box around the slider */
@@ -225,8 +237,8 @@ background-color: rgb(254, 183, 3);
   --switch_width: 2em;
   --switch_height: 1em;
   --thumb_color: #e8e8e8;
-  --track_color: #ff0101;
-  --track_active_color: #15ff00;
+  --track_color: #15ff00;
+  --track_active_color: red;
   --outline_color: #000;
   font-size: 17px;
   position: relative;
@@ -235,11 +247,19 @@ background-color: rgb(254, 183, 3);
   height: var(--switch_height);
 }
 
+.container-fluid {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 /* Hide default HTML checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
+}
+
+#ruta {
+  font-size: 50px;
 }
 
 /* The slider */
@@ -255,6 +275,19 @@ background-color: rgb(254, 183, 3);
   background-color: var(--track_color);
   transition: .15s;
   border-radius: var(--switch_height);
+}
+
+.activo {
+  color: #15ff00;
+  /* Texto verde cuando está activado */
+
+
+}
+
+.inactivo {
+  color: #ff0101;
+  /* Texto rojo cuando está desactivado */
+
 }
 
 .slider:before {
@@ -295,5 +328,4 @@ input:checked+.slider:before {
 input:hover:checked+.slider:before {
   transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
   box-shadow: 0 0.3em 0 var(--outline_color);
-}
-</style>
+}</style>

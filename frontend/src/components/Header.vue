@@ -105,4 +105,7 @@ import { ref } from "vue"
   justify-content: center;
   align-items: center;
 }
+.container-fluid{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
 </style>

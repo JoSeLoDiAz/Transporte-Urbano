@@ -19,6 +19,7 @@ router.get('/:id', obtenerVehiculo);
 
 router.post('/', [
   check("numero_autobus", "El número de autobús es un campo requerido").not().isEmpty(),
+  check("numero_autobus").isLength({ max: 6 }).withMessage("El número de autobús debe tener máximo 6 caracteres"),
   check("nombre_conductor", "El nombre del conductor es un campo requerido").not().isEmpty(),
   check("cedula_conductor", "La cédula del conductor es un campo requerido").not().isEmpty(),
   check("matricula_vehiculo", "La matrícula del vehículo es un campo requerido").not().isEmpty(),
@@ -32,6 +33,7 @@ router.post('/', [
 
 router.put('/:id', [
   check("numero_autobus", "El número de autobús es un campo requerido").not().isEmpty(),
+  check("numero_autobus").isLength({ max: 6 }).withMessage("El número de autobús debe tener máximo 6 caracteres"),
   check("nombre_conductor", "El nombre del conductor es un campo requerido").not().isEmpty(),
   check("cedula_conductor", "La cédula del conductor es un campo requerido").not().isEmpty(),
   check("matricula_vehiculo", "La matrícula del vehículo es un campo requerido").not().isEmpty(),

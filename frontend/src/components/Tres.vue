@@ -8,7 +8,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-6">
-          <h5>Asiento</h5>
+          <h5 id="as" ><i class="fa-solid fa-chair"></i> Asiento</h5>
         </div>
         <div class="col-sm-5"></div>
 
@@ -98,9 +98,14 @@ import { ref } from 'vue';
   align-self: center;
   background-color: white;
 }
-
+.container-fluid{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
 #icono {
   position: relative;
+}
+#as{
+font-size: 50px;
 }
 
 #icono span {

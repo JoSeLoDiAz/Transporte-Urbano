@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div class="container-fluid">
       <div class="row" style="height: 9rem;"></div>
 
@@ -41,35 +40,40 @@
         </div>
       </div>
     </div>
+
+    <div v-if="loginUsers.state.errors > 0" class="alert alert-danger" role="alert">
+      <ul>
+        <li v-for="error in state.errors" :key="error">{{ error }}</li>
+      </ul>
+    </div>
   </div>
-  <div v-if="error" class="error-message">{{ error }}</div>
 </template>
-  
+
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+// import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useLoginUsersStore } from '../stores/loginUsers';
 
-const { setToken, setError } = useLoginUsersStore();
 
-const email = ref('');
-const password = ref('');
-const router = useRouter();
-const error = ref(null);
+let email = ref('');
+let password = ref('');
+let router = useRouter();
+let loginUsers = useLoginUsersStore();
+let e =ref('');
 
-const login = () => {
-  axios.post('/loginUser', { email: email.value, password: password.value })
-    .then(response => {
-      const token = response.data.token;
-      setToken(token);
-      console.log("token generado", token);
-      router.push('/header');
-    })
-    .catch(error => {
-      console.error('Error al iniciar sesión:', error);
-      setError('Credenciales inválidas');
-    });
+const login = async () => {
+  // clearErrors(); 
+  try {
+    const logueo = await loginUsers.loginUsers(email, password)
+    // const token = logueo.data.token;
+    // setToken(token);
+    router.push('/header');
+  } catch (error) {
+    e.value=error;
+    console.error('Error al iniciar sesión:', e.value);
+    // setErrors(['Credenciales inválidas']); 
+  }
 };
 </script>
 
@@ -85,5 +89,10 @@ const login = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 </style>

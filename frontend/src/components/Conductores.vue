@@ -3,13 +3,14 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-6">
-          <h5>Conductor</h5>
+          <h5 id="con"><i class="fas fa-id-badge"></i> Conductor</h5>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button" data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop">Nuevo</button>
+            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+
+              <i class="fas fa-plus"></i> Nuevo</button>
 
           </div>
 
@@ -46,22 +47,22 @@
                 <td>{{ array.direccion }}</td>
                 <td>{{ array.clase_pase }}</td>
                 <td>{{ array.vigencia_pase }}</td>
-                <td>
-{{ array.estado }}
+                <td :class="{ 'activo': array.estado, 'inactivo': !array.estado }">
+                  {{ array.estado ? 'Activo' : 'Inactivo' }}
 
                 </td>
                 <td>
-                  <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop">Editar 📝</button>
-
+                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <i class="fa-solid fa-user-pen"></i>
+                  </button>
                 </td>
                 <td>
                   <label class="switch">
-                    <input type="checkbox">
+                    <input v-model="array.estado" :checked="array.estado" type="checkbox">
                     <span class="slider"></span>
                   </label>
                 </td>
-                
+
               </tr>
 
 
@@ -141,6 +142,9 @@
 
           </div>
           <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+              A simple primary alert—check it out!
+            </div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-success" @click="guaradarConductor">Guardar</button>
           </div>
@@ -154,7 +158,7 @@
 import { useConductorStore } from '../stores/conductores'
 import { ref, onMounted } from 'vue';
 
-
+let estado = ref()
 let conductores = ref([]);
 let nombre = ref('');
 let cedula = ref('');
@@ -182,7 +186,8 @@ const guaradarConductor = async () => {
       telefono: telefono.value,
       direccion: direccion.value,
       clase_pase: clase_pase.value,
-      vigencia_pase: vigencia_pase.value
+      vigencia_pase: vigencia_pase.value,
+      estado: estado.value
 
 
     }
@@ -195,6 +200,7 @@ const guaradarConductor = async () => {
     direccion.value = ''
     clase_pase.value = ''
     vigencia_pase.value = ''
+    estado.value = ''
   } catch (error) {
     console.log(error);
   }
@@ -213,8 +219,34 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.container-fluid {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+#con {
+  font-size: 50px;
+}
+
 #color {
   background-color: rgb(254, 183, 3);
+}
+
+.fa-solid.fa-user-pen {
+  font-size: 22px;
+  /* Ajusta el tamaño de la fuente según lo necesites */
+}
+
+.activo {
+  color: #15ff00;
+  /* Texto verde cuando está activado */
+
+
+}
+
+.inactivo {
+  color: #ff0101;
+  /* Texto rojo cuando está desactivado */
+
 }
 
 /* The switch - the box around the slider */
@@ -223,8 +255,8 @@ onMounted(() => {
   --switch_width: 2em;
   --switch_height: 1em;
   --thumb_color: #e8e8e8;
-  --track_color: #ff0101;
-  --track_active_color: #15ff00;
+  --track_color: #15ff00;
+  --track_active_color: red;
   --outline_color: #000;
   font-size: 17px;
   position: relative;
@@ -293,5 +325,4 @@ input:checked+.slider:before {
 input:hover:checked+.slider:before {
   transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
   box-shadow: 0 0.3em 0 var(--outline_color);
-}
-</style>
+}</style>

@@ -19,11 +19,27 @@ export const useClientStore = defineStore("clientes", () => {
     }
   };
 
+  const editClient = async (id, cliente) => {
+    try {
+      return await axios.put(`http://localhost:4500/clientes/${id}`, cliente);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+  const editEstado = async (id, estado) => {
+    try {
+      return await axios.put(`http://localhost:4500/clientes/estado/${id}`, {estado:estado});
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
 
   return {
     addClient,
     traerclientes,
+    editClient,
+    editEstado
   };
 });
-
-
