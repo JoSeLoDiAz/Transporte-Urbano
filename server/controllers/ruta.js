@@ -52,6 +52,30 @@ export const actualizarRuta = async (req, res) => {
   }
 };
 
+//actualizar estado ruta
+export const actualizarestado = async (req, res) => {
+
+  const id = req.params.id
+  // console.log(`estado actualizado ${id}`);
+
+  const actualizado = {
+    estado: req.body.estado
+  }
+
+  try {
+    const rutaActualizado = await Ruta.findByIdAndUpdate(id, actualizado);
+
+    if (rutaActualizado) {
+      console.log(rutaActualizado);
+      res.status(200).json(rutaActualizado);
+    } else {
+      res.status(404).json({ error: 'ruta no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo actualizar el ruta.', error });
+  }
+};
+
 // Eliminar una ruta
 export const eliminarRuta = async (req, res) => {
   try {

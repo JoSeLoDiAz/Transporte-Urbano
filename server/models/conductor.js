@@ -11,7 +11,7 @@ const conductorSchema = new mongoose.Schema(
     estado: { type: Boolean, default: true }
   },
   {
-    collection: 'Conductores' // Especifica el nombre de la colección en la base de datos
+    collection: 'Conductores'
   }
 );
 

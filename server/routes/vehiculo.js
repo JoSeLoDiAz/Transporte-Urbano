@@ -6,6 +6,7 @@ import {
   obtenerVehiculo,
   crearVehiculo,
   actualizarVehiculo,
+  actualizarestado,
   eliminarVehiculo,
   actualizarVencimientoSeguro,
   actualizarNumeroLicenciaTransito
@@ -28,9 +29,9 @@ router.post('/', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
 ], crearVehiculo);
-
+router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
   check("numero_autobus", "El número de autobús es un campo requerido").not().isEmpty(),
   check("numero_autobus").isLength({ max: 6 }).withMessage("El número de autobús debe tener máximo 6 caracteres"),
@@ -42,7 +43,7 @@ router.put('/:id', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
 ], actualizarVehiculo);
 
 router.delete('/:id', eliminarVehiculo);

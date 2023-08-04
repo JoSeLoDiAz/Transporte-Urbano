@@ -69,7 +69,7 @@
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ bd == 0 ? "Editar Cliente" : "Guardar Cliente" }}
               </h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="salir"></button>
             </div>
             <div class="modal-body">
               <label for="">Nombre</label>
@@ -97,8 +97,11 @@
               </div>
             </div>
             <div class="modal-footer">
+              <div class="alert alert-danger" role="alert">
+                A simple primary alert—check it out!
+              </div>
 
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarCliente">{{ bd == 0 ? "Editar" : "Guardar"
               }}</button>
             </div>
@@ -113,16 +116,17 @@
 import { useClientStore } from '../stores/clientes';
 import { ref, onMounted } from 'vue';
 
-
 let clientes = ref([]);
 const useclientes = useClientStore();
 let nombre = ref('');
 let apellido = ref('');
 let cc = ref('');
 let telefono = ref('');
-let estado = ref(null)
-let bd = ref(1)
-let indice = ref(null)
+
+
+let estado = ref(null);
+let bd = ref(1);
+let indice = ref(null);
 
 async function pedirclientes() {
   try {
@@ -137,34 +141,29 @@ const editarCliente = (clienteSeleccionado) => {
   // Obtener el cliente seleccionado
   console.log(clienteSeleccionado);
 
-  bd.value = 0
-  indice.value = clienteSeleccionado._id
+  bd.value = 0;
+  indice.value = clienteSeleccionado._id;
 
   // Asignar los valores del cliente al formulario/modal de edición
-
   nombre.value = clienteSeleccionado.nombre;
   apellido.value = clienteSeleccionado.apellido;
   cc.value = clienteSeleccionado.cc;
   telefono.value = clienteSeleccionado.telefono;
-
+  estado.value = clienteSeleccionado.estado;
 };
 
 const editEstado = (clienteSeleccionado) => {
-  if (clienteSeleccionado.estado=== true) {
-    useclientes.editEstado(clienteSeleccionado._id,false)
-  }else {
-    useclientes.editEstado(clienteSeleccionado._id,true)
+  if (clienteSeleccionado.estado === true) {
+    useclientes.editEstado(clienteSeleccionado._id, false);
+  } else {
+    useclientes.editEstado(clienteSeleccionado._id, true);
   }
-
-   
-
 };
 
 const guardarCliente = async () => {
   console.log(bd.value);
-  if (bd == 1) {
+  if (bd.value == 1) {
     try {
-
       const nuevoCliente = {
         nombre: nombre.value,
         apellido: apellido.value,
@@ -172,19 +171,20 @@ const guardarCliente = async () => {
         telefono: telefono.value,
         estado: estado.value
       };
-      // Llamamos a la función addClient de la tienda para enviar la 
-      // información al servidor
+      // Llamamos a la función addClient de la tienda para enviar la información al servidor
       await useclientes.addClient(nuevoCliente);
 
-      // lista actualizada
+      // Lista actualizada
       pedirclientes();
-
+      nombre.value = ''
+      apellido.value = ''
+      cc.value = ''
+      telefono.value = ''
 
     } catch (error) {
       console.log(error);
     }
   } else {
-    console.log(indice.value,);
     const nuevoCliente = {
       nombre: nombre.value,
       apellido: apellido.value,
@@ -192,18 +192,22 @@ const guardarCliente = async () => {
       telefono: telefono.value,
       estado: estado.value
     };
-    let r = await useclientes.editClient(indice.value, nuevoCliente)
+    let r = await useclientes.editClient(indice.value, nuevoCliente);
     console.log(r);
     pedirclientes();
+    nombre.value = ''
+    apellido.value = ''
+    cc.value = ''
+    telefono.value = ''
+
   }
-
-  nombre.value = '';
-  apellido.value = '';
-  cc.value = '';
-  telefono.value = '';
-  estado.value = ''
-
 };
+function salir() {
+  nombre.value = ''
+  apellido.value = ''
+  cc.value = ''
+  telefono.value = ''
+}
 
 onMounted(() => {
   pedirclientes();

@@ -20,7 +20,7 @@ router.post('/', [
     check("email").isLength({ max: 100 }).withMessage("El email debe tener máximo 100 caracteres"),
     check("password", "La contraseña es un campo requerido").not().isEmpty(),
     check("password").isLength({ min: 8 }).withMessage("La contraseña debe tener al menos 8 caracteres"),
-    check("password").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).withMessage("La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número"), validarResultados
+    check("password").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).withMessage("La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número")
 ], crearAdministrador);
 
 // Ruta para editar el administrador
@@ -30,7 +30,7 @@ router.put('/', [
     check("email").isLength({ max: 100 }).withMessage("El email debe tener máximo 100 caracteres"),
     check("password", "La contraseña es un campo requerido").not().isEmpty(),
     check("password").isLength({ min: 8 }).withMessage("La contraseña debe tener al menos 8 caracteres"),
-    check("password").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).withMessage("La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número"), validarResultados
+    check("password").matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/).withMessage("La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número")
 ], editarAdministrador);
 
 

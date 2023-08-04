@@ -9,13 +9,13 @@ dotenv.config(); // Carga las variables de entorno de .env
 
 const port = process.env.PORT || 3000;
 const app = express();
-const nombreBd = process.env.bdMongo || 'transUrban';
+// const nombreBd = process.env.bdMongo || 'transUrban';
 
 app.use(bodyParser.json());
 app.use(cors()); // Habilitar CORS para todas las solicitudes
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${nombreBd}`)
-  .then(() => console.log(`Conectado a la Base de MongoDb llamada ${nombreBd}`))
+mongoose.connect(process.env.bdMongo)
+  .then(() => console.log(`Conectado a la Base de MongoDb atlas`, process.env.bdMongo))
   .catch((error) => console.error('Error de conexión a la base de datos:', error));
 
 const db = mongoose.connection;

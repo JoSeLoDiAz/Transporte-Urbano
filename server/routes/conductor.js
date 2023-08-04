@@ -6,6 +6,7 @@ import {
   obtenerConductor,
   crearConductor,
   actualizarConductor,
+  actualizarestado,
   eliminarConductor
 } from '../controllers/conductor.js';
 
@@ -29,10 +30,10 @@ router.post('/', [
     .isIn(["B2", "C1"])
     .withMessage("El pase debe ser para operar servicio público y estar en las categorías B2 o C1"),
   check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty(),
-  check("vigencia_pase").isDate().withMessage("La vigencia de pase debe ser una fecha válida"),
-  validarResultados
+  check("vigencia_pase").isDate().withMessage("La vigencia de pase debe ser una fecha válida")
 ], crearConductor);
 
+router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
   check("nombre", "El nombre es un campo requerido").not().isEmpty(),
   check("cedula", "El número de cédula es un campo requerido").not().isEmpty(),
@@ -46,8 +47,7 @@ router.put('/:id', [
     .isIn(["B2", "C1"])
     .withMessage("El pase debe ser para operar servicio público y estar en las categorías B2 o C1"),
   check("vigencia_pase", "La vigencia de pase es un campo requerido").not().isEmpty(),
-  check("vigencia_pase").isDate().withMessage("La vigencia de pase debe ser una fecha válida"),
-  validarResultados
+  check("vigencia_pase").isDate().withMessage("La vigencia de pase debe ser una fecha válida")
 ], actualizarConductor);
 
 router.delete('/:id', eliminarConductor);

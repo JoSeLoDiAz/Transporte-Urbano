@@ -11,6 +11,24 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
       return error;
     }
   };
+  const editVehiculo = async (id, rutas) => {
+    try {
+      return await axios.put(`http://localhost:4500/vehiculos/${id}`, rutas);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+
+  const editEstado = async (id, estado) => {
+    try {
+      return await axios.put(`http://localhost:4500/vehiculos/estado/${id}`, { estado: estado });
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
 
   const traervehiculos = async () => {
     try {
@@ -23,6 +41,8 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
 
   return {
     addvehiculo,
+    editVehiculo,
+    editEstado,
     traervehiculos,
   };
 });

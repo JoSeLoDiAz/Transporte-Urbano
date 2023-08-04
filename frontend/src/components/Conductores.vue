@@ -1,32 +1,27 @@
-<template  >
+<template>
   <div>
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-6">
-          <h5 id="con"><i class="fas fa-id-badge"></i> Conductor</h5>
+          <h5 id="con"><i class="fas fa-users"></i> Conductor</h5>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-
-              <i class="fas fa-plus"></i> Nuevo</button>
-
+            <button @click="bd = 1" class="btn btn-success" type="button" data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop">
+              <i class="fas fa-plus"></i> Nuevo
+            </button>
           </div>
-
         </div>
         <div class="col-sm-1"></div>
-
       </div>
 
       <div class="row mt-4">
-
         <div class="col-sm-12">
-
           <table class="table table-striped table-hover">
             <thead>
               <tr>
-
                 <th id="color" scope="col">Nombre</th>
                 <th id="color" scope="col">Cedula</th>
                 <th id="color" scope="col">Telefono</th>
@@ -39,114 +34,90 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(array, i) in conductores" :key="i">
-
-                <td>{{ array.nombre }}</td>
-                <td>{{ array.cedula }}</td>
-                <td>{{ array.telefono }}</td>
-                <td>{{ array.direccion }}</td>
-                <td>{{ array.clase_pase }}</td>
-                <td>{{ array.vigencia_pase }}</td>
-                <td :class="{ 'activo': array.estado, 'inactivo': !array.estado }">
-                  {{ array.estado ? 'Activo' : 'Inactivo' }}
-
+              <tr v-for="(conductor, index) in conductores" :key="index">
+                <td>{{ conductor.nombre }}</td>
+                <td>{{ conductor.cedula }}</td>
+                <td>{{ conductor.telefono }}</td>
+                <td>{{ conductor.direccion }}</td>
+                <td>{{ conductor.clase_pase }}</td>
+                <td>{{ conductor.vigencia_pase }}</td>
+                <td :class="{ 'activo': conductor.estado, 'inactivo': !conductor.estado }">
+                  {{ conductor.estado ? 'Activo' : 'Inactivo' }}
                 </td>
                 <td>
-                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                  <button @click="editarConductor(conductor)" type="button" class="btn " data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">
                     <i class="fa-solid fa-user-pen"></i>
                   </button>
                 </td>
                 <td>
                   <label class="switch">
-                    <input v-model="array.estado" :checked="array.estado" type="checkbox">
+                    <input @click="editEstado(conductor)" v-model="conductor.estado" :checked="conductor.estado"
+                      type="checkbox">
                     <span class="slider"></span>
                   </label>
                 </td>
-
               </tr>
-
-
             </tbody>
           </table>
         </div>
-
       </div>
 
-
-
-    </div>
-
-
-
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-      aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Conductor</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-
-
-            <label for="">Nombre</label>
-            <div class="input-group mb-3 ">
-
-              <input v-model="nombre" type="text" class="form-control" placeholder="Nombre..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-
+      <!-- Modal -->
+      <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ bd == 0 ? "Editar Conductor" : "Guardar Conductor"}}</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="salir"></button>
             </div>
-            <label for="">Cedula
-            </label>
-            <div class="input-group mb-3 ">
+            <div class="modal-body">
+              <label for="">Nombre</label>
+              <div class="input-group mb-3">
+                <input v-model="nombre" type="text" class="form-control" placeholder="Nombre..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
 
-              <input v-model="cedula" type="text" class="form-control" placeholder="cedula..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
+              <label for="">Cedula</label>
+              <div class="input-group mb-3">
+                <input v-model="cedula" type="text" class="form-control" placeholder="Cedula..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
 
+              <label for="">Telefono</label>
+              <div class="input-group mb-3">
+                <input v-model="telefono" type="text" class="form-control" placeholder="Telefono..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
+
+              <label for="">Direccion</label>
+              <div class="input-group mb-3">
+                <input v-model="direccion" type="text" class="form-control" placeholder="Direccion..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
+
+              <label for="">Clase_pase</label>
+              <div class="input-group mb-3">
+                <input v-model="clase_pase" type="text" class="form-control" placeholder="Clase de pase..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
+
+              <label for="">Vigencia_pase</label>
+              <div class="input-group mb-3">
+                <input v-model="vigencia_pase" type="date" class="form-control" placeholder="Vigencia de pase..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
             </div>
-
-            <label for="">Telefono</label>
-            <div class="input-group mb-3 ">
-
-              <input v-model="telefono" type="text" class="form-control" placeholder="telefono..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-
+            <div class="modal-footer">
+              <div class="alert alert-danger" role="alert">
+                A simple primary alert—check it out!
+              </div>
+              <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-success" @click="guardarConductor">{{ bd == 1 ? "Guardar" : "Editar"
+              }}
+              </button>
             </div>
-
-            <label for="">Direccion</label>
-            <div class="input-group mb-3 ">
-
-              <input v-model="direccion" type="text" class="form-control" placeholder="Direccion..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-
-            </div>
-
-            <label for="">clase_pase</label>
-            <div class="input-group mb-3 ">
-
-              <input v-model="clase_pase" type="text" class="form-control" placeholder="Clase de pase..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-
-            </div>
-
-            <label for="">vigencia_pase</label>
-            <div class="input-group mb-3 ">
-
-              <input v-model="vigencia_pase" type="date" class="form-control" placeholder="Vigencia de pase..."
-                aria-label="Recipient's username" aria-describedby="button-addon2">
-
-            </div>
-
-
-          </div>
-          <div class="modal-footer">
-            <div class="alert alert-danger" role="alert">
-              A simple primary alert—check it out!
-            </div>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-success" @click="guaradarConductor">Guardar</button>
           </div>
         </div>
       </div>
@@ -154,11 +125,12 @@
   </div>
 </template>
 
+
 <script setup>
 import { useConductorStore } from '../stores/conductores'
 import { ref, onMounted } from 'vue';
 
-let estado = ref()
+
 let conductores = ref([]);
 let nombre = ref('');
 let cedula = ref('');
@@ -166,20 +138,81 @@ let telefono = ref('');
 let direccion = ref('');
 let clase_pase = ref('');
 let vigencia_pase = ref('')
-
 const useconductor = useConductorStore()
+let estado = ref(null);
+let bd = ref(1);
+let indice = ref(null);
+
 
 
 async function pedirconductores() {
-  let conductor = await useconductor.traerconductores()
-  console.log(conductores.data);
-  conductores.value = conductor.data
-
+  try {
+    let conductor = await useconductor.traerconductores()
+    conductores.value = conductor.data
+  } catch (error) {
+    console.log(error);
+  }
 
 }
 
-const guaradarConductor = async () => {
-  try {
+const editarConductor = (conductorSeleccionado) => {
+  // Obtener el cliente seleccionado
+  console.log(conductorSeleccionado);
+
+  bd.value = 0;
+  indice.value = conductorSeleccionado._id;
+
+  // Asignar los valores del cliente al formulario/modal de edición
+  nombre.value = conductorSeleccionado.nombre;
+  cedula.value = conductorSeleccionado.cedula;
+  telefono.value = conductorSeleccionado.telefono;
+  direccion.value = conductorSeleccionado.direccion;
+  clase_pase.value = conductorSeleccionado.clase_pase;
+  vigencia_pase.value = conductorSeleccionado.vigencia_pase;
+  estado.value = conductorSeleccionado.estado;
+};
+
+
+const editEstado = async (conductorSeleccionado) => {
+  if (conductorSeleccionado.estado === true) {
+    await useconductor.editEstado(conductorSeleccionado._id, false);
+  } else {
+    await useconductor.editEstado(conductorSeleccionado._id, true);
+  }
+};
+
+
+
+const guardarConductor = async () => {
+
+  if (bd.value == 1) {
+    try {
+      const nuevoConductor = {
+        nombre: nombre.value,
+        cedula: cedula.value,
+        telefono: telefono.value,
+        direccion: direccion.value,
+        clase_pase: clase_pase.value,
+        vigencia_pase: vigencia_pase.value,
+        estado: estado.value
+
+
+      }
+      await useconductor.addConductor(nuevoConductor);
+      pedirconductores();
+      nombre.value = '';
+      cedula.value = '';
+      telefono.value = '';
+      direccion.value = '';
+      clase_pase.value = '',
+        vigencia_pase.value = '';
+
+
+    } catch (error) {
+      console.log(error);
+    }
+
+  } else {
     const nuevoConductor = {
       nombre: nombre.value,
       cedula: cedula.value,
@@ -188,23 +221,28 @@ const guaradarConductor = async () => {
       clase_pase: clase_pase.value,
       vigencia_pase: vigencia_pase.value,
       estado: estado.value
+    };
+    let r = await useconductor.editConductores(indice.value, nuevoConductor)
+    console.log(r);
+    pedirconductores()
+    nombre.value = '';
+    cedula.value = '';
+    telefono.value = '';
+    direccion.value = '';
+    clase_pase.value = '',
+      vigencia_pase.value = '';
 
-
-    }
-    await useconductor.addConductor(nuevoConductor);
-    pedirconductores();
-
-    nombre.value = ''
-    cedula.value = ''
-    telefono.value = ''
-    direccion.value = ''
-    clase_pase.value = ''
-    vigencia_pase.value = ''
-    estado.value = ''
-  } catch (error) {
-    console.log(error);
   }
 
+}
+
+function salir() {
+  nombre.value = '';
+  cedula.value = '';
+  telefono.value = '';
+  direccion.value = '';
+  clase_pase.value = '',
+    vigencia_pase.value = '';
 }
 
 
@@ -325,4 +363,5 @@ input:checked+.slider:before {
 input:hover:checked+.slider:before {
   transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
   box-shadow: 0 0.3em 0 var(--outline_color);
-}</style>
+}
+</style>

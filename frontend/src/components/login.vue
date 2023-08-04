@@ -26,7 +26,9 @@
               <input v-model="password" type="password" class="form-control" placeholder="Contraseña..."
                 aria-label="Recipient's username" aria-describedby="button-addon2">
             </div>
-
+<div>
+  <span>{{ errores }}</span>
+</div>
             <div class="d-grid gap-2">
               <div class="row">
                 <div class="col"></div>
@@ -41,40 +43,52 @@
       </div>
     </div>
 
-    <div v-if="loginUsers.state.errors > 0" class="alert alert-danger" role="alert">
-      <ul>
-        <li v-for="error in state.errors" :key="error">{{ error }}</li>
-      </ul>
-    </div>
+    <!-- <div v-if="loginUsers.state.errors" class="alert alert-danger" role="alert">
+      {{ loginUsers.state.errors }}
+    </div> -->
+    <p>actualizados</p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-// import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useLoginUsersStore } from '../stores/loginUsers';
-
 
 let email = ref('');
 let password = ref('');
 let router = useRouter();
 let loginUsers = useLoginUsersStore();
-let e =ref('');
+let e = ref('');
+let errores=ref("")
 
-const login = async () => {
-  // clearErrors(); 
-  try {
-    const logueo = await loginUsers.loginUsers(email, password)
-    // const token = logueo.data.token;
-    // setToken(token);
-    router.push('/header');
-  } catch (error) {
-    e.value=error;
-    console.error('Error al iniciar sesión:', e.value);
-    // setErrors(['Credenciales inválidas']); 
-  }
-};
+// const login = async () => {
+//   try {
+//     const logueo = await loginUsers.loguear(email.value, password.value);
+//     console.log(logueo);
+//     router.push('/tres');
+//   } catch (error) {
+    
+//   }
+// };
+
+function login (){
+  loginUsers.loguear(email.value, password.value).then((res)=>{
+    console.log(res);
+    router.push('/tres');
+  }).catch((error)=>{
+    if (error.response && error.response.data.errors) {
+      errores.value = error.response.data.errors[0].msg;
+      console.log(`error0: ${errores.value}`);
+    } else if(error.response.data){
+      errores.value = error.response.data.msg;
+      console.log(`error0: ${errores.value}`);
+    }
+    else {
+      console.log('Error:', error);
+    }
+  })
+}
 </script>
 
 <style scoped>

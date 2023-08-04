@@ -22,10 +22,10 @@ router.post('/', [
   check("apellido", "El apellido es un campo requerido").not().isEmpty(),
   check("apellido").matches(/^[a-zA-Z\s]*$/).withMessage("El apellido solo debe contener letras y espacios"),
   check("cc", "El número de cédula es un campo requerido").not().isEmpty(),
-  check("telefono").matches(/^\d{10}$/).withMessage("El teléfono debe tener exactamente 10 dígitos numéricos"),
   check("cc").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("cc").isLength({ max: 15 }).withMessage("El número de cédula debe tener máximo 15 dígitos"),
-  check("telefono", "El teléfono es un campo requerido").not().isEmpty(), validarResultados
+  check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
+  check("telefono").matches(/^\d{10}$/).withMessage("El teléfono debe tener exactamente 10 dígitos numéricos")
 ], crearCliente);
 router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
@@ -34,10 +34,10 @@ router.put('/:id', [
   check("apellido", "El apellido es un campo requerido").not().isEmpty(),
   check("apellido").matches(/^[a-zA-Z\s]*$/).withMessage("El apellido solo debe contener letras y espacios"),
   check("cc", "El número de cédula es un campo requerido").not().isEmpty(),
-  check("telefono").matches(/^\d{10}$/).withMessage("El teléfono debe tener exactamente 10 dígitos numéricos"),
   check("cc").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("cc").isLength({ max: 15 }).withMessage("El número de cédula debe tener máximo 15 dígitos"),
-  check("telefono", "El teléfono es un campo requerido").not().isEmpty(), validarResultados
+  check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
+  check("telefono").matches(/^\d{10}$/).withMessage("El teléfono debe tener exactamente 10 dígitos numéricos")
 ], actualizarCliente);
 router.delete('/:id', eliminarCliente);
 

@@ -7,7 +7,7 @@ import Vendedor from '../models/vendedor.js';
 const iniciarSesion = async (req, res) => {
 
   const { email, password } = req.body;
-
+// console.log(email,password);
   try {
     let user = null;
     let userType = null;
@@ -16,7 +16,7 @@ const iniciarSesion = async (req, res) => {
     user = await Administrador.findOne({ email });
     if (user) {
       userType = 'Administrador';
-      console.log("Inicia Administrador");
+   //   console.log("Inicia Administrador");
     } else {
       // Verificar si el usuario es un Administrador de Rutas
       user = await AdministradorRutas.findOne({ email });
@@ -41,7 +41,7 @@ const iniciarSesion = async (req, res) => {
     // Verificar las credenciales del usuario en la base de datos
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ msg: 'Credenciales inválidas valida la contraseña' });
+      return res.status(401).json({ msg: 'Credenciales inválidas revisa la contraseña' });
     }
 
     // Si las credenciales son válidas, generar el token JWT usando la clave privada del archivo .env
@@ -52,7 +52,7 @@ const iniciarSesion = async (req, res) => {
     );
 
     // Mostrar los datos del usuario logueado en la consola
-    console.log('Usuario logueado:', user);
+  //  console.log('Usuario logueado:', user);
 
     res.json({ msg: 'Inicio de sesión exitoso.', token });
   } catch (error) {

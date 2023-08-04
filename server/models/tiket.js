@@ -13,8 +13,7 @@ const tiketSchema = new mongoose.Schema(
     numero_de_puesto: { type: Number },
     valor_puesto: { type: Number },
     ruta: { type: mongoose.Schema.Types.ObjectId, ref: "Ruta" },
-    fecha_tiket: { type: Date, default: Date.now },
-    estado: { type: Boolean, default: true }
+    fecha_tiket: { type: Date, default: Date.now }
   },
   { collection: "Ticketes" }
 );

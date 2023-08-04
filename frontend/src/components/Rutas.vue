@@ -1,16 +1,15 @@
-
 <template>
   <div>
     <div class="container-fluid">
-
       <div class="row">
         <div class="col-sm-6">
-          <h5 id="ruta"><i class="fas fa-road"></i> Rutas</h5>
+          <h5 id="ruta"><i class="fas fa-road"></i> rutas</h5>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
           <div class="d-grid gap-2">
-            <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            <button @click="bd = 1" class="btn btn-success" type="button" data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop">
 
               <i class="fas fa-plus"></i> Nuevo</button>
 
@@ -42,27 +41,28 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(array, i) in Rutas" :key="i">
+              <tr v-for="(ruta, index) in rutas" :key="index">
 
-                <td>{{ array.origen }}</td>
-                <td>{{ array.destino }}</td>
-                <td>{{ array.hora_salida }}</td>
-                <td>{{ array.fecha_salida }}</td>
-                <td>{{ array.tiempo_estimado_viaje }}</td>
-                <td>{{ array.descripcion }}</td>
-                <td :class="{ 'activo': array.estado, 'inactivo': !array.estado }">
-                  {{ array.estado ? 'Activo' : 'Inactivo' }}
+                <td>{{ ruta.origen }}</td>
+                <td>{{ ruta.destino }}</td>
+                <td>{{ ruta.hora_salida }}</td>
+                <td>{{ ruta.fecha_salida }}</td>
+                <td>{{ ruta.tiempo_estimado_viaje }}</td>
+                <td>{{ ruta.descripcion }}</td>
+                <td :class="{ 'activo': ruta.estado, 'inactivo': !ruta.estado }">
+                  {{ ruta.estado ? 'Activo' : 'Inactivo' }}
 
                 </td>
                 <td>
 
-                  <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                  <button @click="editarrutas(ruta)" type="button" class="btn " data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop">
                     <i class="fa-solid fa-user-pen"></i>
                   </button>
                 </td>
                 <td>
                   <label class="switch">
-                    <input v-model="array.estado" :checked="array.estado" type="checkbox">
+                    <input @click="editEstado(ruta)" v-model="ruta.estado" :checked="ruta.estado" type="checkbox">
                     <span class="slider"></span>
                   </label>
                 </td>
@@ -83,8 +83,8 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel"> Ruta</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ bd == 0 ? "Editar Ruta" : "Guardar Ruta" }}</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="salir" ></button>
             </div>
             <div class="modal-body">
 
@@ -118,7 +118,7 @@
                   aria-label="Recipient's username" aria-describedby="button-addon2">
 
               </div>
-              <label for="">Tiempo_estimado</label>
+              <label for="">Tiempo_estimado </label>
               <div class="input-group mb-3 ">
 
                 <input v-model="tiempo_estimado_viaje" type="text" class="form-control"
@@ -139,19 +139,13 @@
               <div class="alert alert-danger" role="alert">
                 A simple primary alert—check it out!
               </div>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-success" @click="guardarRuta">Guardar</button>
+              <button  @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-success" @click="guardarRuta">{{ bd == 1 ? "Guardar Ruta" : "Editar Ruta"}}</button>
             </div>
           </div>
         </div>
       </div>
-
-
-
     </div>
-
-
-
   </div>
 </template>
 
@@ -160,7 +154,7 @@ import { useRutasStore } from '../stores/rutas';
 import { ref, onMounted } from 'vue';
 
 
-let Rutas = ref([]);
+let rutas = ref([]);
 let estado = ref()
 let origen = ref('');
 let destino = ref('');
@@ -168,22 +162,81 @@ let hora_salida = ref('');
 let fecha_salida = ref('');
 let tiempo_estimado_viaje = ref('');
 let descripcion = ref('')
+let bd = ref(1);
+let indice = ref(null);
 
 const userutas = useRutasStore()
 
 
 async function pedirRutas() {
   let ruta = await userutas.traerRutas()
-  console.log(Rutas.data);
-  Rutas.value = ruta.data
+  rutas.value = ruta.data
+}
+
+const editarrutas = (rutaSeleccionada) => {
+  // Obtener la ruta seleccionada
+  console.log(rutaSeleccionada);
+
+  bd.value = 0;
+  indice.value = rutaSeleccionada._id;
+
+  // Asignar los valores del cliente al formulario/modal de edición
+  origen.value = rutaSeleccionada.origen;
+  destino.value = rutaSeleccionada.destino;
+  hora_salida.value = rutaSeleccionada.hora_salida;
+  fecha_salida.value = rutaSeleccionada.fecha_salida; // Agregar esta línea
+  tiempo_estimado_viaje.value = rutaSeleccionada.tiempo_estimado_viaje;
+  descripcion.value = rutaSeleccionada.descripcion;
+  estado.value = rutaSeleccionada.estado;
+};
 
 
+
+const editEstado = async (rutaSeleccionada) => {
+  if (rutaSeleccionada.estado === true) {
+    await userutas.editEstado(rutaSeleccionada._id, false);
+  } else {
+    await userutas.editEstado(rutaSeleccionada._id, true);
+  }
+};
+
+
+function salir() {
+  origen.value = '';
+    destino.value = '';
+    hora_salida.value = '';
+    fecha_salida.value = '';
+    tiempo_estimado_viaje.value = '';
+    descripcion.value = '';
 }
 
 const guardarRuta = async () => {
 
-  try {
+  if (bd.value == 1) {
+    try {
+      const nuevaRuta = {
+        origen: origen.value,
+        destino: destino.value,
+        hora_salida: hora_salida.value,
+        fecha_salida: fecha_salida.value,
+        tiempo_estimado_viaje: tiempo_estimado_viaje.value,
+        descripcion: descripcion.value,
+        estado: estado.value
+      }
+      await userutas.addRutas(nuevaRuta);
+      pedirRutas();
 
+      origen.value = '';
+      destino.value = '';
+      hora_salida.value = '';
+      fecha_salida.value = '';
+      tiempo_estimado_viaje.value = '';
+      descripcion.value = '';
+    } catch (error) {
+      console.log(error);
+    }
+
+  } else {
     const nuevaRuta = {
       origen: origen.value,
       destino: destino.value,
@@ -192,26 +245,19 @@ const guardarRuta = async () => {
       tiempo_estimado_viaje: tiempo_estimado_viaje.value,
       descripcion: descripcion.value,
       estado: estado.value
-    }
-
-    await userutas.addRutas(nuevaRuta)
+    };
+    let r = await userutas.editrutas(indice.value, nuevaRuta)
+    console.log(r);
     pedirRutas()
-
-    origen.value = ''
-    destino.value = ''
-    hora_salida.value = ''
-    fecha_salida.value = ''
-    tiempo_estimado_viaje.value = ''
-    descripcion.value = ''
-    estado = ''
-
-  } catch (error) {
-    console.log(error);
+    origen.value = '';
+    destino.value = '';
+    hora_salida.value = '';
+    fecha_salida.value = '';
+    tiempo_estimado_viaje.value = '';
+    descripcion.value = '';
   }
 
-
 }
-
 onMounted(() => {
   pedirRutas()
 
@@ -328,4 +374,5 @@ input:checked+.slider:before {
 input:hover:checked+.slider:before {
   transform: translateX(calc(var(--switch_width) - var(--switch_height))) translateY(-0.3em);
   box-shadow: 0 0.3em 0 var(--outline_color);
-}</style>
+}
+</style>

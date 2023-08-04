@@ -7,7 +7,7 @@ import {
   crearRuta,
   actualizarRuta,
   eliminarRuta,
-  
+  actualizarestado,
   obtenerHorarios,
   agregarHorario,
   actualizarHorario,
@@ -29,9 +29,9 @@ router.post('/', [
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
-  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"), validarResultados
+  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres")
 ], crearRuta);
-
+router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
   check("origen", "El origen es un campo requerido").not().isEmpty(),
   check("destino", "El destino es un campo requerido").not().isEmpty(),
@@ -39,7 +39,7 @@ router.put('/:id', [
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
-  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"), validarResultados
+  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres")
 ], actualizarRuta);
 
 router.delete('/:id', eliminarRuta);

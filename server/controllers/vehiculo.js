@@ -1,5 +1,4 @@
 import Vehiculo from '../models/vehiculo.js';
-import { check, validationResult } from 'express-validator';
 
 
 export const obtenerVehiculos = async (req, res) => {
@@ -27,12 +26,6 @@ export const obtenerVehiculo = async (req, res) => {
 
 export const crearVehiculo = async (req, res) => {
   try {
-    // Validar los resultados de las validaciones
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-
     // Crear el nuevo vehículo
     const nuevoVehiculo = new Vehiculo(req.body);
     const vehiculoCreado = await nuevoVehiculo.save();
@@ -54,6 +47,30 @@ export const actualizarVehiculo = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'No se pudo actualizar el vehículo.' });
+  }
+};
+
+//actualizar estado vehiculo
+export const actualizarestado = async (req, res) => {
+
+  const id = req.params.id
+  // console.log(`estado actualizado ${id}`);
+
+  const actualizado = {
+    estado: req.body.estado
+  }
+
+  try {
+    const vehiculoActualizado = await Vehiculo.findByIdAndUpdate(id, actualizado);
+
+    if (vehiculoActualizado) {
+      console.log(vehiculoActualizado);
+      res.status(200).json(vehiculoActualizado);
+    } else {
+      res.status(404).json({ error: 'vehiculo no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo actualizar el vehiculo.', error });
   }
 };
 

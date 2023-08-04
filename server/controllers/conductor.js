@@ -51,6 +51,30 @@ export const actualizarConductor = async (req, res) => {
   }
 };
 
+//actualizar estado conductor
+export const actualizarestado = async (req, res) => {
+
+  const id = req.params.id
+  // console.log(`estado actualizado ${id}`);
+
+  const actualizado = {
+    estado: req.body.estado
+  }
+
+  try {
+    const conductorActualizado = await Conductor.findByIdAndUpdate(id, actualizado);
+
+    if (conductorActualizado) {
+      console.log(conductorActualizado);
+      res.status(200).json(conductorActualizado);
+    } else {
+      res.status(404).json({ error: 'conductor no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'No se pudo actualizar el conductor.', error });
+  }
+};
+
 // Eliminar un conductor
 export const eliminarConductor = async (req, res) => {
   try {

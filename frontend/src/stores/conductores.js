@@ -19,10 +19,29 @@ export const useConductorStore = defineStore("conductores", () => {
     }
   };
 
+  const editConductores = async (id, conductores) => {
+    try {
+      return await axios.put(`http://localhost:4500/conductores/${id}`, conductores);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+  const editEstado = async (id, estado) => {
+    try {
+      return await axios.put(`http://localhost:4500/conductores/estado/${id}`, {estado:estado});
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
 
   return {
     addConductor,
     traerconductores,
+    editConductores,
+    editEstado
   };
 });
 

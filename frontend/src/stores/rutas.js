@@ -10,6 +10,25 @@ export const useRutasStore = defineStore("rutas", () => {
       return error;
     }
   };
+  const editrutas = async (id, rutas) => {
+    try {
+      return await axios.put(`http://localhost:4500/rutas/${id}`, rutas);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+
+  const editEstado = async (id, estado) => {
+    try {
+      return await axios.put(`http://localhost:4500/rutas/estado/${id}`, { estado: estado });
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
 
   const traerRutas = async () => {
     try {
@@ -22,6 +41,8 @@ export const useRutasStore = defineStore("rutas", () => {
 
   return {
     addRutas,
+    editrutas,
+    editEstado,
     traerRutas,
   };
 });

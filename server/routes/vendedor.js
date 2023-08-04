@@ -6,6 +6,7 @@ import {
     getVendedor,
     crearVendedor,
     actualizarVendedor,
+    actualizarestado,
     eliminarVendedor
 } from '../controllers/vendedor.js';
 
@@ -23,7 +24,7 @@ router.post('/', [
     check("email", "El email debe ser válido").isEmail(),
     check("password", "La contraseña es un campo requerido").not().isEmpty(), validarResultados
 ], crearVendedor);
-
+router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
     check("cc").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
     check("nombre", "El nombre es un campo requerido").not().isEmpty(),
