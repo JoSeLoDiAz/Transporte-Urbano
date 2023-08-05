@@ -110,8 +110,8 @@
               </div>
             </div>
             <div class="modal-footer">
-              <div class="alert alert-danger" role="alert">
-                A simple primary alert—check it out!
+              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+                <span>{{ errores }}</span>
               </div>
               <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarConductor">{{ bd == 1 ? "Guardar" : "Editar"
@@ -142,8 +142,13 @@ const useconductor = useConductorStore()
 let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
+let errores =ref ('')
 
-
+const limpiarAlert = () => {
+  setTimeout(() => {
+    errores.value = ''; 
+  }, 2000);
+}
 
 async function pedirconductores() {
   try {
@@ -155,22 +160,31 @@ async function pedirconductores() {
 
 }
 
-const editarConductor = (conductorSeleccionado) => {
-  // Obtener el cliente seleccionado
-  console.log(conductorSeleccionado);
+const editarConductor = async (conductorSeleccionado) => {
+  try {
+    bd.value = 0;
+    indice.value = conductorSeleccionado._id;
 
-  bd.value = 0;
-  indice.value = conductorSeleccionado._id;
-
-  // Asignar los valores del cliente al formulario/modal de edición
-  nombre.value = conductorSeleccionado.nombre;
-  cedula.value = conductorSeleccionado.cedula;
-  telefono.value = conductorSeleccionado.telefono;
-  direccion.value = conductorSeleccionado.direccion;
-  clase_pase.value = conductorSeleccionado.clase_pase;
-  vigencia_pase.value = conductorSeleccionado.vigencia_pase;
-  estado.value = conductorSeleccionado.estado;
+    // Asignar los valores del conductor al formulario/modal de edición
+    nombre.value = conductorSeleccionado.nombre;
+    cedula.value = conductorSeleccionado.cedula;
+    telefono.value = conductorSeleccionado.telefono;
+    direccion.value = conductorSeleccionado.direccion;
+    clase_pase.value = conductorSeleccionado.clase_pase;
+    vigencia_pase.value = conductorSeleccionado.vigencia_pase;
+    estado.value = conductorSeleccionado.estado;
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      errores.value = error.response.data.errors[0].msg;
+    } else if (error.response.data) {
+      errores.value = error.response.data.msg;
+    } else {
+      errores.value = "Error interno para editar el conductor,\n Intenta Nuevamente";
+    }
+    limpiarAlert();
+  }
 };
+
 
 
 const editEstado = async (conductorSeleccionado) => {
@@ -184,7 +198,6 @@ const editEstado = async (conductorSeleccionado) => {
 
 
 const guardarConductor = async () => {
-
   if (bd.value == 1) {
     try {
       const nuevoConductor = {
@@ -195,46 +208,57 @@ const guardarConductor = async () => {
         clase_pase: clase_pase.value,
         vigencia_pase: vigencia_pase.value,
         estado: estado.value
-
-
-      }
+      };
       await useconductor.addConductor(nuevoConductor);
       pedirconductores();
       nombre.value = '';
       cedula.value = '';
       telefono.value = '';
       direccion.value = '';
-      clase_pase.value = '',
-        vigencia_pase.value = '';
-
-
-    } catch (error) {
-      console.log(error);
-    }
-
-  } else {
-    const nuevoConductor = {
-      nombre: nombre.value,
-      cedula: cedula.value,
-      telefono: telefono.value,
-      direccion: direccion.value,
-      clase_pase: clase_pase.value,
-      vigencia_pase: vigencia_pase.value,
-      estado: estado.value
-    };
-    let r = await useconductor.editConductores(indice.value, nuevoConductor)
-    console.log(r);
-    pedirconductores()
-    nombre.value = '';
-    cedula.value = '';
-    telefono.value = '';
-    direccion.value = '';
-    clase_pase.value = '',
+      clase_pase.value = '';
       vigencia_pase.value = '';
-
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+      } else {
+        errores.value = "Error interno para Guardar el conductor,\n Intenta Nuevamente";
+      }
+      limpiarAlert();
+    }
+  } else {
+    try {
+      const nuevoConductor = {
+        nombre: nombre.value,
+        cedula: cedula.value,
+        telefono: telefono.value,
+        direccion: direccion.value,
+        clase_pase: clase_pase.value,
+        vigencia_pase: vigencia_pase.value,
+        estado: estado.value
+      };
+      let r = await useconductor.editConductores(indice.value, nuevoConductor);
+      pedirconductores();
+      nombre.value = '';
+      cedula.value = '';
+      telefono.value = '';
+      direccion.value = '';
+      clase_pase.value = '';
+      vigencia_pase.value = '';
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+      } else {
+        errores.value = "Error interno para Editar el conductor,\n Intenta Nuevamente";
+      }
+      limpiarAlert();
+    }
   }
+};
 
-}
 
 function salir() {
   nombre.value = '';
@@ -257,6 +281,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+  /* desapareces el alerta de errores */
+  .hidden {
+    display: none;
+  }
+
 .container-fluid {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }

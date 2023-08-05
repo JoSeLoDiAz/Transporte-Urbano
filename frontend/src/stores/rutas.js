@@ -6,16 +6,14 @@ export const useRutasStore = defineStore("rutas", () => {
     try {
       return await axios.post(`http://localhost:4500/rutas`, info);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error
     }
   };
   const editrutas = async (id, rutas) => {
     try {
       return await axios.put(`http://localhost:4500/rutas/${id}`, rutas);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error
     }
   };
 

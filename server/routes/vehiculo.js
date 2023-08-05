@@ -29,7 +29,7 @@ router.post('/', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(),validarResultados
 ], crearVehiculo);
 router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
@@ -43,7 +43,7 @@ router.put('/:id', [
   check("marca", "La marca del vehículo es un campo requerido").not().isEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").not().isEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").not().isEmpty().isDate(),
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty()
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(),validarResultados
 ], actualizarVehiculo);
 
 router.delete('/:id', eliminarVehiculo);
@@ -55,7 +55,7 @@ router.put('/:id/seguro', [
 
 // Ruta para actualizar el número de licencia de tránsito de un vehículo
 router.put('/:id/licencia', [
-  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(), validarResultados
+  check("numero_licencia_transito", "El número de licencia de tránsito es un campo requerido").not().isEmpty(),validarResultados, validarResultados
 ], actualizarNumeroLicenciaTransito);
 
 export default router;

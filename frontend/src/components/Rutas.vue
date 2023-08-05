@@ -136,8 +136,8 @@
 
             </div>
             <div class="modal-footer ">
-              <div class="alert alert-danger" role="alert">
-                A simple primary alert—check it out!
+              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+                <span>{{ errores }}</span>
               </div>
               <button  @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarRuta">{{ bd == 1 ? "Guardar Ruta" : "Editar Ruta"}}</button>
@@ -164,31 +164,48 @@ let tiempo_estimado_viaje = ref('');
 let descripcion = ref('')
 let bd = ref(1);
 let indice = ref(null);
+let errores = ref('');
 
 const userutas = useRutasStore()
 
+const limpiarAlert = () => {
+  setTimeout(() => {
+    errores.value = ''; // Restablecer el valor de errores después de 2 segundos
+  }, 2000);
+}
 
 async function pedirRutas() {
   let ruta = await userutas.traerRutas()
   rutas.value = ruta.data
 }
 
-const editarrutas = (rutaSeleccionada) => {
-  // Obtener la ruta seleccionada
-  console.log(rutaSeleccionada);
+const editarrutas = async (rutaSeleccionada) => {
+  try {
+    bd.value = 0;
+    indice.value = rutaSeleccionada._id;
 
-  bd.value = 0;
-  indice.value = rutaSeleccionada._id;
-
-  // Asignar los valores del cliente al formulario/modal de edición
-  origen.value = rutaSeleccionada.origen;
-  destino.value = rutaSeleccionada.destino;
-  hora_salida.value = rutaSeleccionada.hora_salida;
-  fecha_salida.value = rutaSeleccionada.fecha_salida; // Agregar esta línea
-  tiempo_estimado_viaje.value = rutaSeleccionada.tiempo_estimado_viaje;
-  descripcion.value = rutaSeleccionada.descripcion;
-  estado.value = rutaSeleccionada.estado;
+    // Asignar los valores de la ruta al formulario/modal de edición
+    origen.value = rutaSeleccionada.origen;
+    destino.value = rutaSeleccionada.destino;
+    hora_salida.value = rutaSeleccionada.hora_salida;
+    fecha_salida.value = rutaSeleccionada.fecha_salida;
+    tiempo_estimado_viaje.value = rutaSeleccionada.tiempo_estimado_viaje;
+    descripcion.value = rutaSeleccionada.descripcion;
+    estado.value = rutaSeleccionada.estado;
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      errores.value = error.response.data.errors[0].msg;
+      // console.log(`error0: ${errores.value}`);
+    } else if (error.response.data) {
+      errores.value = error.response.data.msg;
+      // console.log(`error0: ${errores.value}`);
+    } else {
+      errores.value = "Error interno para editar la Ruta,\n Intenta Nuevamente"
+    }
+    limpiarAlert()
+  }
 };
+
 
 
 
@@ -233,10 +250,20 @@ const guardarRuta = async () => {
       tiempo_estimado_viaje.value = '';
       descripcion.value = '';
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+        // console.log(`error0: ${errores.value}`);
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+        // console.log(`error0: ${errores.value}`);
+      } else {
+        errores.value = "Error interno para Guardar las Rutas,\n Intenta Nuevamente"
+      }
+      limpiarAlert()
     }
 
   } else {
+  try {
     const nuevaRuta = {
       origen: origen.value,
       destino: destino.value,
@@ -246,16 +273,27 @@ const guardarRuta = async () => {
       descripcion: descripcion.value,
       estado: estado.value
     };
-    let r = await userutas.editrutas(indice.value, nuevaRuta)
+    let r = await userutas.editrutas(indice.value, nuevaRuta);
     console.log(r);
-    pedirRutas()
+    pedirRutas();
     origen.value = '';
     destino.value = '';
     hora_salida.value = '';
     fecha_salida.value = '';
     tiempo_estimado_viaje.value = '';
     descripcion.value = '';
-  }
+  } catch (error) {
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+      } else {
+        errores.value = "Error interno para Editar la Ruta,\n Intenta Nuevamente";
+      }
+      limpiarAlert()
+    }
+}
+
 
 }
 onMounted(() => {
@@ -268,6 +306,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+/* desapareces el alerta de errores */
+.hidden {
+    display: none;
+  }
+
 #color {
   background-color: rgb(254, 183, 3);
 }

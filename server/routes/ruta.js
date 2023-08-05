@@ -29,7 +29,7 @@ router.post('/', [
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
-  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres")
+  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"),validarResultados
 ], crearRuta);
 router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
@@ -39,7 +39,7 @@ router.put('/:id', [
   check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
-  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres")
+  check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"),validarResultados
 ], actualizarRuta);
 
 router.delete('/:id', eliminarRuta);

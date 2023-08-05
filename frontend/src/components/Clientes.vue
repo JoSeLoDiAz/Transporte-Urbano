@@ -97,10 +97,9 @@
               </div>
             </div>
             <div class="modal-footer">
-              <div class="alert alert-danger" role="alert">
-                A simple primary alert—check it out!
+              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+                <span>{{ errores }}</span>
               </div>
-
               <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarCliente">{{ bd == 0 ? "Editar" : "Guardar"
               }}</button>
@@ -122,11 +121,18 @@ let nombre = ref('');
 let apellido = ref('');
 let cc = ref('');
 let telefono = ref('');
+let errores = ref('');
 
 
 let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
+
+const limpiarAlert = () => {
+  setTimeout(() => {
+    errores.value = ''; // Restablecer el valor de errores después de 2 segundos
+  }, 2000);
+}
 
 async function pedirclientes() {
   try {
@@ -136,32 +142,45 @@ async function pedirclientes() {
     console.log(error);
   }
 }
+const editarCliente = async (clienteSeleccionado) => {
+  try {
+    bd.value = 0;
+    indice.value = clienteSeleccionado._id;
 
-const editarCliente = (clienteSeleccionado) => {
-  // Obtener el cliente seleccionado
-  console.log(clienteSeleccionado);
-
-  bd.value = 0;
-  indice.value = clienteSeleccionado._id;
-
-  // Asignar los valores del cliente al formulario/modal de edición
-  nombre.value = clienteSeleccionado.nombre;
-  apellido.value = clienteSeleccionado.apellido;
-  cc.value = clienteSeleccionado.cc;
-  telefono.value = clienteSeleccionado.telefono;
-  estado.value = clienteSeleccionado.estado;
+    // Asignar los valores del cliente al formulario/modal de edición
+    nombre.value = clienteSeleccionado.nombre;
+    apellido.value = clienteSeleccionado.apellido;
+    cc.value = clienteSeleccionado.cc;
+    telefono.value = clienteSeleccionado.telefono;
+    estado.value = clienteSeleccionado.estado;
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      errores.value = error.response.data.errors[0].msg;
+      // console.log(`error0: ${errores.value}`);
+    } else if (error.response.data) {
+      errores.value = error.response.data.msg;
+      // console.log(`error0: ${errores.value}`);
+    } else {
+      errores.value = "Error interno para editar el cliente,\n Intenta Nuevamente"
+    }
+    limpiarAlert()
+  }
 };
 
-const editEstado = (clienteSeleccionado) => {
-  if (clienteSeleccionado.estado === true) {
-    useclientes.editEstado(clienteSeleccionado._id, false);
-  } else {
-    useclientes.editEstado(clienteSeleccionado._id, true);
+
+const editEstado = async (clienteSeleccionado) => {
+  try {
+    if (clienteSeleccionado.estado === true) {
+      await useclientes.editEstado(clienteSeleccionado._id, false);
+    } else {
+      await useclientes.editEstado(clienteSeleccionado._id, true);
+    }
+  } catch (error) {
+    console.error('Error en editEstado:', error);
   }
 };
 
 const guardarCliente = async () => {
-  console.log(bd.value);
   if (bd.value == 1) {
     try {
       const nuevoCliente = {
@@ -182,24 +201,43 @@ const guardarCliente = async () => {
       telefono.value = ''
 
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+        // console.log(`error0: ${errores.value}`);
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+        // console.log(`error0: ${errores.value}`);
+      } else {
+        errores.value = "Error interno para Guardar el cliente,\n Intenta Nuevamente"
+      }
+      limpiarAlert()
     }
   } else {
-    const nuevoCliente = {
-      nombre: nombre.value,
-      apellido: apellido.value,
-      cc: cc.value,
-      telefono: telefono.value,
-      estado: estado.value
-    };
-    let r = await useclientes.editClient(indice.value, nuevoCliente);
-    console.log(r);
-    pedirclientes();
-    nombre.value = ''
-    apellido.value = ''
-    cc.value = ''
-    telefono.value = ''
+    try {
+      const nuevoCliente = {
+        nombre: nombre.value,
+        apellido: apellido.value,
+        cc: cc.value,
+        telefono: telefono.value,
+        estado: estado.value
+      };
 
+      let r = await useclientes.editClient(indice.value, nuevoCliente);
+      pedirclientes();
+      nombre.value = '';
+      apellido.value = '';
+      cc.value = '';
+      telefono.value = '';
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        errores.value = error.response.data.errors[0].msg;
+      } else if (error.response.data) {
+        errores.value = error.response.data.msg;
+      } else {
+        errores.value = "Error interno para Editar el cliente,\n Intenta Nuevamente";
+      }
+      limpiarAlert()
+    }
   }
 };
 function salir() {
@@ -219,6 +257,10 @@ onMounted(() => {
   color: #15ff00;
   /* Texto verde cuando está activado */
 
+  /* desapareces el alerta de errores */
+  .hidden {
+    display: none;
+  }
 
 }
 

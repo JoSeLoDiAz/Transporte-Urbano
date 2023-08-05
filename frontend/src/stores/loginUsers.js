@@ -22,17 +22,10 @@ export const useLoginUsersStore = defineStore('loginUsers', () => {
     const loguear = async (email, password) => {
         let data = { email, password };
         try {
-            
+
             return await axios.post('http://localhost:4500/loginUser', data);
-            // const token = response.data.token;
         } catch (error) {
-            // console.log("jjjjjjjjjjjjjjj");
-            // console.log(error.response);
-            // console.log("jjjjjjjjjjjjjjj");
             throw error
-            
-        //     console.log('Credenciales inválidas'); // Establece el error en la tienda
-        //     return error;
         }
     };
 

@@ -7,16 +7,14 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
     try {
       return await axios.post(`http://localhost:4500/vehiculos`, info);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error
     }
   };
   const editVehiculo = async (id, rutas) => {
     try {
       return await axios.put(`http://localhost:4500/vehiculos/${id}`, rutas);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error
     }
   };
 

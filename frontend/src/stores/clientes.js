@@ -6,8 +6,7 @@ export const useClientStore = defineStore("clientes", () => {
     try {
       return await axios.post(`http://localhost:4500/clientes`, info);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error;
     }
   };
 
@@ -15,7 +14,7 @@ export const useClientStore = defineStore("clientes", () => {
     try {
       return await axios.get(`http://localhost:4500/clientes`);
     } catch (error) {
-      console.log("no sirve");
+      console.log("No se Pudieron traer los clientes", error);
     }
   };
 
@@ -23,8 +22,7 @@ export const useClientStore = defineStore("clientes", () => {
     try {
       return await axios.put(`http://localhost:4500/clientes/${id}`, cliente);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error;
     }
   };
   const editEstado = async (id, estado) => {

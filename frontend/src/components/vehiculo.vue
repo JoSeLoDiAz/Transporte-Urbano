@@ -79,7 +79,8 @@
                             <h1 class="modal-title fs-5" id="staticBackdropLabel">
                                 {{ bd == 0 ? "Editar Vehiculo" : "Guardar Vehiculo" }}
                             </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="limpiarCampos" > </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="limpiarCampos"> </button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -149,8 +150,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <div class="alert alert-danger" role="alert">
-                                A simple primary alert—check it out!
+                            <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+                                <span>{{ errores }}</span>
                             </div>
                             <button @click="limpiarCampos" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                 Cerrar
@@ -182,10 +183,16 @@ let marca = ref("");
 let modelo = ref("");
 let fecha_vencimiento_seguro = ref("");
 let numero_licencia_transito = ref("");
-
+let errores = ref('');
 let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
+
+const limpiarAlert = () => {
+    setTimeout(() => {
+        errores.value = ''; // Restablecer el valor de errores después de 2 segundos
+    }, 2000);
+}
 
 async function pedirvehiculos() {
     try {
@@ -196,27 +203,38 @@ async function pedirvehiculos() {
     }
 }
 
-const editVehiculo = (vehiculoSeleccionado) => {
-    // Obtener el cliente seleccionado
-    console.log(vehiculoSeleccionado);
+const editVehiculo = async (vehiculoSeleccionado) => {
+    try {
+        bd.value = 0;
+        indice.value = vehiculoSeleccionado._id;
 
-    bd.value = 0;
-    indice.value = vehiculoSeleccionado._id;
-
-    // Asignar los valores del cliente al formulario/modal de edición
-    numero_autobus.value = vehiculoSeleccionado.numero_autobus;
-    nombre_conductor.value = vehiculoSeleccionado.nombre_conductor;
-    cedula_conductor.value = vehiculoSeleccionado.cedula_conductor;
-    matricula_vehiculo.value = vehiculoSeleccionado.matricula_vehiculo;
-    numero_puestos.value = vehiculoSeleccionado.numero_puestos;
-    marca.value = vehiculoSeleccionado.marca;
-    modelo.value = vehiculoSeleccionado.modelo;
-    fecha_vencimiento_seguro.value =
-        vehiculoSeleccionado.fecha_vencimiento_seguro;
-    numero_licencia_transito.value =
-        vehiculoSeleccionado.numero_licencia_transito;
-    estado.value = vehiculoSeleccionado.estado;
+        // Asignar los valores del vehículo al formulario/modal de edición
+        numero_autobus.value = vehiculoSeleccionado.numero_autobus;
+        nombre_conductor.value = vehiculoSeleccionado.nombre_conductor;
+        cedula_conductor.value = vehiculoSeleccionado.cedula_conductor;
+        matricula_vehiculo.value = vehiculoSeleccionado.matricula_vehiculo;
+        numero_puestos.value = vehiculoSeleccionado.numero_puestos;
+        marca.value = vehiculoSeleccionado.marca;
+        modelo.value = vehiculoSeleccionado.modelo;
+        fecha_vencimiento_seguro.value =
+            vehiculoSeleccionado.fecha_vencimiento_seguro;
+        numero_licencia_transito.value =
+            vehiculoSeleccionado.numero_licencia_transito;
+        estado.value = vehiculoSeleccionado.estado;
+    } catch (error) {
+        if (error.response && error.response.data.errors) {
+            errores.value = error.response.data.errors[0].msg;
+            // console.log(`error0: ${errores.value}`);
+        } else if (error.response.data) {
+            errores.value = error.response.data.msg;
+            // console.log(`error0: ${errores.value}`);
+        } else {
+            errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
+        }
+        limpiarAlert()
+    }
 };
+
 
 const limpiarCampos = () => {
     numero_autobus.value = "";
@@ -261,27 +279,48 @@ const guardarvehiculo = async () => {
             await vehiculosStore.addvehiculo(nuevovehiculo);
             pedirvehiculos();
             limpiarCampos();
-            
+
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.data.errors) {
+                errores.value = error.response.data.errors[0].msg;
+                // console.log(`error0: ${errores.value}`);
+            } else if (error.response.data) {
+                errores.value = error.response.data.msg;
+                // console.log(`error0: ${errores.value}`);
+            } else {
+                errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
+            }
+            limpiarAlert()
         }
     } else {
-        const nuevovehiculo = {
-            numero_autobus: numero_autobus.value,
-            nombre_conductor: nombre_conductor.value,
-            cedula_conductor: cedula_conductor.value,
-            matricula_vehiculo: matricula_vehiculo.value,
-            numero_puestos: numero_puestos.value,
-            marca: marca.value,
-            modelo: modelo.value,
-            fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
-            numero_licencia_transito: numero_licencia_transito.value,
-        };
-        let r = await vehiculosStore.editVehiculo(indice.value, nuevovehiculo);
-        console.log(r);
-        pedirvehiculos();
-        limpiarCampos();
+        try {
+            const nuevovehiculo = {
+                numero_autobus: numero_autobus.value,
+                nombre_conductor: nombre_conductor.value,
+                cedula_conductor: cedula_conductor.value,
+                matricula_vehiculo: matricula_vehiculo.value,
+                numero_puestos: numero_puestos.value,
+                marca: marca.value,
+                modelo: modelo.value,
+                fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
+                numero_licencia_transito: numero_licencia_transito.value,
+            };
+            let r = await vehiculosStore.editVehiculo(indice.value, nuevovehiculo);
+            console.log(r);
+            pedirvehiculos();
+            limpiarCampos();
+        } catch (error) {
+            if (error.response && error.response.data.errors) {
+                errores.value = error.response.data.errors[0].msg;
+            } else if (error.response.data) {
+                errores.value = error.response.data.msg;
+            } else {
+                errores.value = "Error interno para Editar el Vehiculo,\n Intenta Nuevamente";
+            }
+            limpiarAlert()
+        }
     }
+
 };
 onMounted(() => {
     pedirvehiculos();
@@ -289,6 +328,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* desapareces el alerta de errores */
+.hidden {
+    display: none;
+}
+
 #color {
     background-color: rgb(254, 183, 3);
 }

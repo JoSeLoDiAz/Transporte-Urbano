@@ -28,9 +28,7 @@ export const getCliente = async (req, res) => {
 };
 //actualizar estado cliente
 export const actualizarestado = async (req, res) => {
-
   const id = req.params.id
-  // console.log(`estado actualizado ${id}`);
 
   const actualizado = {
     estado: req.body.estado
@@ -40,7 +38,6 @@ export const actualizarestado = async (req, res) => {
     const clienteActualizado = await Cliente.findByIdAndUpdate(id, actualizado);
 
     if (clienteActualizado) {
-      console.log(clienteActualizado);
       res.status(200).json(clienteActualizado);
     } else {
       res.status(404).json({ error: 'Cliente no encontrado.' });
