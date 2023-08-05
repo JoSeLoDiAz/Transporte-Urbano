@@ -71,7 +71,6 @@ const login = async () => {
       console.log('Error al ingresar:', error);
     }
     Swal.fire({
-      position: 'top-end',
       icon: 'error',
       title: errores.value, // Usa el mensaje de error para el título
       showConfirmButton: false,
