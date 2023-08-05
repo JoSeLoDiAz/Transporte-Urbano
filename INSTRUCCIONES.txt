@@ -1,0 +1,9 @@
+Para ejecutar el repositorio completo debe cargar el archivo .env dentro de la carpeta frontend (si no existe),
+instalar las carpetas de node_modules en cada una de las carpetas frontend y server
+
+luego para iniciar sesion por frontend estas son las credenciales:
+
+email:
+    admin@admin.com
+contraseña:
+    Admin1234
