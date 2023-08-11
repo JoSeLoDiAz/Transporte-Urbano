@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="container-fluid">
-      <div class="row">
+      <div class="row mt-3">
         <div class="col-sm-6">
           <h5 id="cli"><i class="fas fa-users"></i> Clientes</h5>
         </div>
@@ -97,9 +97,6 @@
               </div>
             </div>
             <div class="modal-footer">
-              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
-                <span>{{ errores }}</span>
-              </div>
               <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarCliente">{{ bd == 0 ? "Editar" : "Guardar"
               }}</button>
@@ -128,11 +125,6 @@ let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
 
-const limpiarAlert = () => {
-  setTimeout(() => {
-    errores.value = ''; // Restablecer el valor de errores después de 2 segundos
-  }, 2000);
-}
 
 async function pedirclientes() {
   try {
@@ -156,14 +148,11 @@ const editarCliente = async (clienteSeleccionado) => {
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errores.value = error.response.data.errors[0].msg;
-      // console.log(`error0: ${errores.value}`);
     } else if (error.response.data) {
-      errores.value = error.response.data.msg;
-      // console.log(`error0: ${errores.value}`);
+      errores.value = error.response.data.error;
     } else {
       errores.value = "Error interno para editar el cliente,\n Intenta Nuevamente"
     }
-    limpiarAlert()
   }
 };
 
@@ -180,8 +169,15 @@ const editEstado = async (clienteSeleccionado) => {
   }
 };
 
+const cerrarModal = () => {
+  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
+  if (closeButton) {
+    closeButton.click();
+  }
+};
+
 const guardarCliente = async () => {
-  if (bd.value == 1) {
+  if (bd.value === 1) {
     try {
       const nuevoCliente = {
         nombre: nombre.value,
@@ -190,27 +186,40 @@ const guardarCliente = async () => {
         telefono: telefono.value,
         estado: estado.value
       };
-      // Llamamos a la función addClient de la tienda para enviar la información al servidor
-      await useclientes.addClient(nuevoCliente);
 
-      // Lista actualizada
+      await useclientes.addClient(nuevoCliente);
+      cerrarModal()
       pedirclientes();
-      nombre.value = ''
-      apellido.value = ''
-      cc.value = ''
-      telefono.value = ''
+      nombre.value = '';
+      apellido.value = '';
+      cc.value = '';
+      telefono.value = '';
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Cliente Guardado',
+        text: 'El cliente se ha guardado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
 
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
-        // console.log(`error0: ${errores.value}`);
+
+
       } else if (error.response.data) {
-        errores.value = error.response.data.msg;
-        // console.log(`error0: ${errores.value}`);
-      } else {
-        errores.value = "Error interno para Guardar el cliente,\n Intenta Nuevamente"
+        errores.value = error.response.data.error;
       }
-      limpiarAlert()
+      else {
+        errores.value = 'Error interno para Guardar el cliente,\n Intenta Nuevamente';
+      }
+      Swal.fire({
+        icon: 'error',
+        title: errores.value,
+        timer: 1500
+      });
+
     }
   } else {
     try {
@@ -223,23 +232,41 @@ const guardarCliente = async () => {
       };
 
       let r = await useclientes.editClient(indice.value, nuevoCliente);
+      cerrarModal()
       pedirclientes();
       nombre.value = '';
       apellido.value = '';
       cc.value = '';
       telefono.value = '';
+
+      Swal.fire({
+
+        icon: 'success',
+        title: 'Cliente Editado',
+        text: 'El cliente se ha editado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
+
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
       } else if (error.response.data) {
-        errores.value = error.response.data.msg;
+        errores.value = error.response.data.error;
       } else {
-        errores.value = "Error interno para Editar el cliente,\n Intenta Nuevamente";
+        errores.value = 'Error interno para Editar el cliente,\n Intenta Nuevamente';
       }
-      limpiarAlert()
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errores.value,
+        timer: 1500,
+      });
+
     }
   }
 };
+
 function salir() {
   nombre.value = ''
   apellido.value = ''
@@ -256,13 +283,14 @@ onMounted(() => {
 .activo {
   color: #15ff00;
   /* Texto verde cuando está activado */
-
   /* desapareces el alerta de errores */
-  .hidden {
-    display: none;
-  }
-
 }
+
+j .hidden {
+  display: none;
+}
+
+
 
 .inactivo {
   color: #ff0101;
@@ -276,8 +304,9 @@ onMounted(() => {
 }
 
 #color {
-  background-color: rgb(254, 183, 3);
+  background-color: #1e69e1dc;
 }
+
 
 /* The switch - the box around the slider */
 .switch {
@@ -285,8 +314,8 @@ onMounted(() => {
   --switch_width: 2em;
   --switch_height: 1em;
   --thumb_color: #e8e8e8;
-  --track_color: #15ff00;
-  --track_active_color: red;
+  --track_color: #ff0d00;
+  --track_active_color: rgb(0, 255, 38);
   --outline_color: #000;
   font-size: 17px;
   position: relative;

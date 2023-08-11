@@ -11,7 +11,7 @@ const rutaSchema = new mongoose.Schema(
     estado: { type: Boolean , default: true}
   },
   {
-    collection: 'Rutas', // Especifica el nombre de la colección en la base de datos
+    collection: 'Rutas',
   }
 );
 

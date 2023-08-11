@@ -28,6 +28,21 @@ export const obtenerConductor = async (req, res) => {
 // Crear un nuevo conductor
 export const crearConductor = async (req, res) => {
   try {
+    const { cedula, numero_licencia } = req.body;
+
+    // Verificar si ya existe un conductor con la misma cédula
+    const conductorExistenteCedula = await Conductor.findOne({ cedula });
+    if (conductorExistenteCedula) {
+      return res.status(400).json({ error: 'Ya existe un conductor con esta cédula.' });
+    }
+
+    // Verificar si ya existe un conductor con el mismo número de licencia
+    const conductorExistenteLicencia = await Conductor.findOne({ numero_licencia });
+    if (conductorExistenteLicencia) {
+      return res.status(400).json({ error: 'Ya existe un conductor con este número de licencia.' });
+    }
+
+    // Si las validaciones pasan, crear el nuevo conductor
     const nuevoConductor = new Conductor(req.body);
     const conductorCreado = await nuevoConductor.save();
     res.status(201).json(conductorCreado);
@@ -36,11 +51,28 @@ export const crearConductor = async (req, res) => {
   }
 };
 
+
 // Actualizar un conductor existente
 export const actualizarConductor = async (req, res) => {
   try {
     const { id } = req.params;
-    const conductorActualizado = await Conductor.findByIdAndUpdate(id, req.body, { new: true });
+    const { cedula, numero_licencia, ...datosConductor } = req.body;
+
+    // Verificar si ya existe otro conductor con la misma cédula
+    const conductorExistenteCedula = await Conductor.findOne({ cedula, _id: { $ne: id } });
+    if (conductorExistenteCedula) {
+      return res.status(400).json({ error: 'Ya existe un conductor con esta cédula.' });
+    }
+
+    // Verificar si ya existe otro conductor con el mismo número de licencia
+    const conductorExistenteLicencia = await Conductor.findOne({ numero_licencia, _id: { $ne: id } });
+    if (conductorExistenteLicencia) {
+      return res.status(400).json({ error: 'Ya existe un conductor con este número de licencia.' });
+    }
+
+    // Actualizar el conductor en la base de datos
+    const conductorActualizado = await Conductor.findByIdAndUpdate(id, datosConductor, { new: true });
+
     if (conductorActualizado) {
       res.status(200).json(conductorActualizado);
     } else {
@@ -50,6 +82,7 @@ export const actualizarConductor = async (req, res) => {
     res.status(500).json({ error: 'No se pudo actualizar el conductor.' });
   }
 };
+
 
 //actualizar estado conductor
 export const actualizarestado = async (req, res) => {

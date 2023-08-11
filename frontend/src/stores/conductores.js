@@ -22,8 +22,7 @@ export const useConductorStore = defineStore("conductores", () => {
     try {
       return await axios.put(`http://localhost:4500/conductores/${id}`, conductores);
     } catch (error) {
-      console.log(error);
-      return error;
+      throw error;
     }
   };
   const editEstado = async (id, estado) => {

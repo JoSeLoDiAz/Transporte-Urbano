@@ -2,7 +2,7 @@ import Hello from "../components/Conductores.vue"
 import Home from "../components/Clientes.vue"
 import Login from "../components/Login.vue"
 import Header from "../components/Header.vue"
-import tres from "../components/Tres.vue"
+import VenderTk from "../components/VenderTk.vue"
 import cuatro from "../components/Rutas.vue"
 import vehiculo from "../components/vehiculo.vue"
 
@@ -13,7 +13,7 @@ export const routes = [
         children: [
             { path: "/home", component: Home },
             { path: "/hello", component: Hello },
-            { path: "/tres", component: tres },
+            { path: "/vendertk", component: VenderTk },
             {path: "/cuatro", component:cuatro},
             {path:"/vehiculo", component:vehiculo}
         ]

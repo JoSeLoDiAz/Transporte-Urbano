@@ -7,7 +7,11 @@ import Counter, { getNextSequenceValue } from '../models/counter.js';
 // Obtener todos los tickets
 export const obtenerTickets = async (req, res) => {
   try {
-    const tickets = await Tiket.find();
+    const tickets = await Tiket.find()
+    .populate("vehiculo")
+    .populate("cliente")
+    .populate("ruta")
+
     res.status(200).json(tickets);
   } catch (error) {
     res.status(500).json({ error: 'No se pudieron obtener los tickets.' });

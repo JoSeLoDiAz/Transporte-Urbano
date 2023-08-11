@@ -26,6 +26,7 @@ export const getCliente = async (req, res) => {
     res.status(500).json({ error: 'No se pudo obtener el cliente.' });
   }
 };
+
 //actualizar estado cliente
 export const actualizarestado = async (req, res) => {
   const id = req.params.id
@@ -68,7 +69,18 @@ export const crearCliente = async (req, res) => {
 export const actualizarCliente = async (req, res) => {
   try {
     const { id } = req.params;
-    const clienteActualizado = await Cliente.findByIdAndUpdate(id, req.body, { new: true });
+    const { cc, ...datosCliente } = req.body;
+
+    if (cc) {
+      // Verificar si el nuevo número de cédula ya existe en la base de datos
+      const clienteExistente = await Cliente.findOne({ cc, _id: { $ne: id } });
+      if (clienteExistente) {
+        return res.status(400).json({ error: 'El número de cédula ya está registrado.' });
+      }
+    }
+
+    const clienteActualizado = await Cliente.findByIdAndUpdate(id, datosCliente, { new: true });
+
     if (clienteActualizado) {
       res.status(200).json(clienteActualizado);
     } else {
@@ -78,6 +90,7 @@ export const actualizarCliente = async (req, res) => {
     res.status(500).json({ error: 'No se pudo actualizar el cliente.' });
   }
 };
+
 
 // Eliminar un cliente
 export const eliminarCliente = async (req, res) => {

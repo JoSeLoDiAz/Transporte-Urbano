@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container-fluid">
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-sm-6">
                     <h5 id="bus"><i class="fas fa-bus"></i> Vehiculo</h5>
                 </div>
@@ -22,15 +22,15 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th id="color" scope="col">Num autobus</th>
-                                <th id="color" scope="col">Nombre_conductor</th>
-                                <th id="color" scope="col">Cedula_conductor</th>
+                                <th id="color" scope="col">Numero autobus</th>
+                                <th id="color" scope="col">Nombre Conductor</th>
+                                <th id="color" scope="col">Cedula Conductor</th>
                                 <th id="color" scope="col">Matricula</th>
-                                <th id="color" scope="col">Num_puestos</th>
+                                <th id="color" scope="col">Num Puestos</th>
                                 <th id="color" scope="col">Marca</th>
                                 <th id="color" scope="col">Modelo</th>
-                                <th id="color" scope="col">Fecha_vencimiento</th>
-                                <th id="color" scope="col">Numero_licencia</th>
+                                <th id="color" scope="col">Fecha Vencimiento</th>
+                                <th id="color" scope="col">Numero Licencia</th>
                                 <th id="color" scope="col">Estado</th>
                                 <th id="color" scope="col">Opciones</th>
                                 <th id="color" scope="col">Act / Des</th>
@@ -45,7 +45,7 @@
                                 <td>{{ array.numero_puestos }}</td>
                                 <td>{{ array.marca }}</td>
                                 <td>{{ array.modelo }}</td>
-                                <td>{{ array.fecha_vencimiento_seguro }}</td>
+                                <td>{{ formatDate(array.fecha_vencimiento_seguro) }}</td>
                                 <td>{{ array.numero_licencia_transito }}</td>
                                 <td :class="{ activo: array.estado, inactivo: !array.estado }">
                                     {{ array.estado ? "Activo" : "Inactivo" }}
@@ -76,7 +76,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                            <h1 class="modal-title fs-2" id="staticBackdropLabel">
                                 {{ bd == 0 ? "Editar Vehiculo" : "Guardar Vehiculo" }}
                             </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
@@ -136,7 +136,6 @@
                                     <label for="">Fecha de vencimiento del seguro</label>
                                     <div class="input-group mb-3">
                                         <input v-model="fecha_vencimiento_seguro" type="date" class="form-control"
-                                            placeholder="Fecha de vencimiento del seguro..."
                                             aria-label="Recipient's username" aria-describedby="button-addon2" />
                                     </div>
 
@@ -150,9 +149,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+                            <!-- <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
                                 <span>{{ errores }}</span>
-                            </div>
+                            </div> -->
                             <button @click="limpiarCampos" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                 Cerrar
                             </button>
@@ -188,11 +187,14 @@ let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
 
-const limpiarAlert = () => {
-    setTimeout(() => {
-        errores.value = ''; // Restablecer el valor de errores después de 2 segundos
-    }, 2000);
-}
+// Filtro para formatear la fecha en "día-mes-año"
+const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 async function pedirvehiculos() {
     try {
@@ -202,6 +204,16 @@ async function pedirvehiculos() {
         console.log(error);
     }
 }
+
+//me toco formatear la fecha para el input
+const formatDateForInput = (isoDate) => {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 
 const editVehiculo = async (vehiculoSeleccionado) => {
     try {
@@ -217,7 +229,7 @@ const editVehiculo = async (vehiculoSeleccionado) => {
         marca.value = vehiculoSeleccionado.marca;
         modelo.value = vehiculoSeleccionado.modelo;
         fecha_vencimiento_seguro.value =
-            vehiculoSeleccionado.fecha_vencimiento_seguro;
+            formatDateForInput(vehiculoSeleccionado.fecha_vencimiento_seguro);
         numero_licencia_transito.value =
             vehiculoSeleccionado.numero_licencia_transito;
         estado.value = vehiculoSeleccionado.estado;
@@ -231,7 +243,7 @@ const editVehiculo = async (vehiculoSeleccionado) => {
         } else {
             errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
         }
-        limpiarAlert()
+
     }
 };
 
@@ -260,6 +272,13 @@ const editEstado = (vehiculoSeleccionado) => {
     }
 };
 
+const cerrarModal = () => {
+  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
+  if (closeButton) {
+    closeButton.click();
+  }
+};
+
 const guardarvehiculo = async () => {
     console.log(bd.value);
     if (bd.value === 1) {
@@ -277,6 +296,12 @@ const guardarvehiculo = async () => {
                 estado: estado.value,
             };
             await vehiculosStore.addvehiculo(nuevovehiculo);
+            await Swal.fire({
+                icon: 'success',
+                title: 'Vehículo guardado correctamente',
+                timer: 1500
+            });
+            cerrarModal();
             pedirvehiculos();
             limpiarCampos();
 
@@ -290,10 +315,17 @@ const guardarvehiculo = async () => {
             } else {
                 errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
             }
-            limpiarAlert()
+            Swal.fire({
+                icon: 'error',
+                
+                title: errores.value,
+                timer: 1500
+            });
+
         }
     } else {
         try {
+
             const nuevovehiculo = {
                 numero_autobus: numero_autobus.value,
                 nombre_conductor: nombre_conductor.value,
@@ -307,6 +339,13 @@ const guardarvehiculo = async () => {
             };
             let r = await vehiculosStore.editVehiculo(indice.value, nuevovehiculo);
             console.log(r);
+
+            await Swal.fire({
+                timer:1500,
+                icon: 'success',
+                title: 'Vehículo editado correctamente',
+            });
+            cerrarModal();
             pedirvehiculos();
             limpiarCampos();
         } catch (error) {
@@ -317,7 +356,13 @@ const guardarvehiculo = async () => {
             } else {
                 errores.value = "Error interno para Editar el Vehiculo,\n Intenta Nuevamente";
             }
-            limpiarAlert()
+            Swal.fire({
+                icon: 'error',
+                timer:1500,
+                title: 'Error al editar el Vehículo',
+                text: errores.value,
+            });
+
         }
     }
 
@@ -334,7 +379,7 @@ onMounted(() => {
 }
 
 #color {
-    background-color: rgb(254, 183, 3);
+    background-color: #1e69e1dc;
 }
 
 #bus {

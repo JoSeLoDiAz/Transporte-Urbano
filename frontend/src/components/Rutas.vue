@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="container-fluid">
-      <div class="row">
+      <div class="row mt-3">
         <div class="col-sm-6">
-          <h5 id="ruta"><i class="fas fa-road"></i> rutas</h5>
+          <h5 id="ruta"><i class="fas fa-road"></i> Rutas</h5>
         </div>
         <div class="col-sm-3"></div>
         <div class="col-sm-2 mt-2">
@@ -31,9 +31,9 @@
 
                 <th id="color" scope="col">Origen</th>
                 <th id="color" scope="col">Destino</th>
-                <th id="color" scope="col">Hora_salida</th>
-                <th id="color" scope="col">Fecha_salida</th>
-                <th id="color" scope="col">Tiempo_viaje</th>
+                <th id="color" scope="col">Hora Salida</th>
+                <th id="color" scope="col">Fecha Salida</th>
+                <th id="color" scope="col">Tiempo Viaje</th>
                 <th id="color" scope="col">Descripcion</th>
                 <th id="color" scope="col">Estado</th>
                 <th id="color" scope="col">Opciones</th>
@@ -46,7 +46,7 @@
                 <td>{{ ruta.origen }}</td>
                 <td>{{ ruta.destino }}</td>
                 <td>{{ ruta.hora_salida }}</td>
-                <td>{{ ruta.fecha_salida }}</td>
+                <td>{{ formatDate(ruta.fecha_salida) }}</td>
                 <td>{{ ruta.tiempo_estimado_viaje }}</td>
                 <td>{{ ruta.descripcion }}</td>
                 <td :class="{ 'activo': ruta.estado, 'inactivo': !ruta.estado }">
@@ -83,7 +83,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ bd == 0 ? "Editar Ruta" : "Guardar Ruta" }}</h1>
+              <h1 class="modal-title fs-2" id="staticBackdropLabel">{{ bd == 0 ? "Editar Ruta" : "Guardar Ruta" }}</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="salir" ></button>
             </div>
             <div class="modal-body">
@@ -104,21 +104,21 @@
 
               </div>
 
-              <label for="">Hora_salida</label>
+              <label for="">Hora Salida</label>
               <div class="input-group mb-3 ">
 
-                <input v-model="hora_salida" type="text" class="form-control" placeholder="Hora de salida..."
+                <input v-model="hora_salida" type="time" class="form-control" placeholder="Hora de salida..."
                   aria-label="Recipient's username" aria-describedby="button-addon2">
 
               </div>
-              <label for="">Fecha_salida</label>
+              <label for="">Fecha Salida</label>
               <div class="input-group mb-3 ">
 
-                <input v-model="fecha_salida" type="date" class="form-control" placeholder="fecha de salida..."
+                <input v-model="fecha_salida" type="date" class="form-control"
                   aria-label="Recipient's username" aria-describedby="button-addon2">
 
               </div>
-              <label for="">Tiempo_estimado </label>
+              <label for="">Tiempo Estimado </label>
               <div class="input-group mb-3 ">
 
                 <input v-model="tiempo_estimado_viaje" type="text" class="form-control"
@@ -136,9 +136,9 @@
 
             </div>
             <div class="modal-footer ">
-              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
+              <!-- <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
                 <span>{{ errores }}</span>
-              </div>
+              </div> -->
               <button  @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarRuta">{{ bd == 1 ? "Guardar Ruta" : "Editar Ruta"}}</button>
             </div>
@@ -168,16 +168,30 @@ let errores = ref('');
 
 const userutas = useRutasStore()
 
-const limpiarAlert = () => {
-  setTimeout(() => {
-    errores.value = ''; // Restablecer el valor de errores después de 2 segundos
-  }, 2000);
-}
+// Filtro para formatear la fecha en "día-mes-año"
+const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 async function pedirRutas() {
   let ruta = await userutas.traerRutas()
   rutas.value = ruta.data
 }
+
+//me toco formatear la fecha para el input
+const formatDateForInput = (isoDate) => {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+
 
 const editarrutas = async (rutaSeleccionada) => {
   try {
@@ -188,26 +202,23 @@ const editarrutas = async (rutaSeleccionada) => {
     origen.value = rutaSeleccionada.origen;
     destino.value = rutaSeleccionada.destino;
     hora_salida.value = rutaSeleccionada.hora_salida;
-    fecha_salida.value = rutaSeleccionada.fecha_salida;
+    fecha_salida.value = formatDateForInput(rutaSeleccionada.fecha_salida);
     tiempo_estimado_viaje.value = rutaSeleccionada.tiempo_estimado_viaje;
     descripcion.value = rutaSeleccionada.descripcion;
     estado.value = rutaSeleccionada.estado;
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errores.value = error.response.data.errors[0].msg;
-      // console.log(`error0: ${errores.value}`);
+      
     } else if (error.response.data) {
       errores.value = error.response.data.msg;
-      // console.log(`error0: ${errores.value}`);
+     
     } else {
       errores.value = "Error interno para editar la Ruta,\n Intenta Nuevamente"
     }
-    limpiarAlert()
+    
   }
 };
-
-
-
 
 const editEstado = async (rutaSeleccionada) => {
   if (rutaSeleccionada.estado === true) {
@@ -217,6 +228,12 @@ const editEstado = async (rutaSeleccionada) => {
   }
 };
 
+const cerrarModal = () => {
+  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
+  if (closeButton) {
+    closeButton.click();
+  }
+};
 
 function salir() {
   origen.value = '';
@@ -241,6 +258,7 @@ const guardarRuta = async () => {
         estado: estado.value
       }
       await userutas.addRutas(nuevaRuta);
+      cerrarModal()
       pedirRutas();
 
       origen.value = '';
@@ -249,17 +267,31 @@ const guardarRuta = async () => {
       fecha_salida.value = '';
       tiempo_estimado_viaje.value = '';
       descripcion.value = '';
+
+      Swal.fire({
+        
+        icon: 'success',
+        title: 'Ruta Guardada',
+        text: 'La ruta se ha guardado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
-        // console.log(`error0: ${errores.value}`);
+       
       } else if (error.response.data) {
         errores.value = error.response.data.msg;
-        // console.log(`error0: ${errores.value}`);
+       
       } else {
         errores.value = "Error interno para Guardar las Rutas,\n Intenta Nuevamente"
       }
-      limpiarAlert()
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errores.value,
+        timer:1500
+      });
     }
 
   } else {
@@ -274,14 +306,26 @@ const guardarRuta = async () => {
       estado: estado.value
     };
     let r = await userutas.editrutas(indice.value, nuevaRuta);
-    console.log(r);
+    cerrarModal()
     pedirRutas();
+
+
     origen.value = '';
     destino.value = '';
     hora_salida.value = '';
     fecha_salida.value = '';
     tiempo_estimado_viaje.value = '';
     descripcion.value = '';
+
+
+    Swal.fire({
+        
+        icon: 'success',
+        title: 'Ruta Editada',
+        text: 'La ruta se ha editado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
   } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
@@ -290,7 +334,12 @@ const guardarRuta = async () => {
       } else {
         errores.value = "Error interno para Editar la Ruta,\n Intenta Nuevamente";
       }
-      limpiarAlert()
+      Swal.fire({
+        icon: 'error',
+        title: errores.value,
+        timer:1500
+      });
+      
     }
 }
 
@@ -312,10 +361,9 @@ onMounted(() => {
     display: none;
   }
 
-#color {
-  background-color: rgb(254, 183, 3);
+  #color {
+  background-color: #1e69e1dc;
 }
-
 .fa-solid.fa-user-pen {
   font-size: 22px;
   /* Ajusta el tamaño de la fuente según lo necesites */
@@ -327,8 +375,8 @@ onMounted(() => {
   --switch_width: 2em;
   --switch_height: 1em;
   --thumb_color: #e8e8e8;
-  --track_color: #15ff00;
-  --track_active_color: red;
+  --track_color: red;
+  --track_active_color: #15ff00;
   --outline_color: #000;
   font-size: 17px;
   position: relative;

@@ -29,8 +29,18 @@
             <div class="d-grid gap-2">
               <div class="row">
                 <div class="col"></div>
-                <div class="col">
-                  <button class="btn btn-primary" type="button" @click="login()">Ingresar</button>
+                <div class="col d-flex justify-content-center">
+
+
+
+
+                  <div v-if="loginUsers.login" class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <button v-else class="btn btn-primary" type="button" @click="login()">Ingresar</button>
+
+
+
                 </div>
                 <div class="col"></div>
               </div>
@@ -57,15 +67,15 @@ let errores = ref("")
 const login = async () => {
   try {
     const res = await loginUsers.loguear(email.value, password.value);
-    // console.log(res);
-    router.push('/tres');
+   
+    router.push('/vendertk');
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errores.value = error.response.data.errors[0].msg;
-      // console.log(`error0: ${errores.value}`);
+      
     } else if (error.response.data) {
       errores.value = error.response.data.msg;
-      // console.log(`error0: ${errores.value}`);
+      
     } else {
       errores.value = "Error interno para iniciar sesion,\n Intenta Nuevamente"
       console.log('Error al ingresar:', error);
@@ -74,7 +84,7 @@ const login = async () => {
       icon: 'error',
       title: errores.value, // Usa el mensaje de error para el título
       showConfirmButton: false,
-      timer: 2000 // Mostrar durante 2 segundos
+      timer: 1500 // Mostrar durante 2 segundos
     });
   }
 };
@@ -93,10 +103,5 @@ const login = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
 }
 </style>

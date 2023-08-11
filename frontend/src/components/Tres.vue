@@ -5,8 +5,8 @@
   <div>
 
 
-    <div class="container-fluid">
-      <div class="row">
+    <div class="container-fluid" >
+      <div class="row mt-3" >
         <div class="col-sm-6">
           <h5 id="as" ><i class="fa-solid fa-chair"></i> Asiento</h5>
         </div>
@@ -125,5 +125,3 @@ font-size: 50px;
   height: 30px;
 }
 </style> 
-
-

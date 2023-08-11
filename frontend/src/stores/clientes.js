@@ -6,6 +6,7 @@ export const useClientStore = defineStore("clientes", () => {
     try {
       return await axios.post(`http://localhost:4500/clientes`, info);
     } catch (error) {
+      // console.log(error);
       throw error;
     }
   };

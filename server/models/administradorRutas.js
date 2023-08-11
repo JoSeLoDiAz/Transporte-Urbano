@@ -17,7 +17,7 @@ const administradorRutasSchema = new mongoose.Schema(
       required: true
     }
   },
-  { collection: 'AdminRutas' } // Especifica el nombre de la colección en la base de datos
+  { collection: 'AdminRutas' }
 );
 
 // Antes de guardar el administrador de rutas, hashear la password

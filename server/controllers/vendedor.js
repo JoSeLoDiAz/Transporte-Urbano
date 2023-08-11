@@ -35,41 +35,51 @@ export const getVendedor = async (req, res) => {
 // Función para crear un vendedor
 export const crearVendedor = async (req, res) => {
     try {
-        // Crea un nuevo objeto Vendedor con los datos de la solicitud
-        const nuevoVendedor = new Vendedor(req.body);
-
-        // Guarda el vendedor en la base de datos
-        const vendedorCreado = await nuevoVendedor.save();
-
-        // Envía la respuesta con el vendedor creado
-        res.status(201).json(vendedorCreado);
+      // Verificar si ya existe un vendedor con la misma cédula
+      const { cedula } = req.body;
+      const vendedorExistente = await Vendedor.findOne({ cedula });
+  
+      if (vendedorExistente) {
+        return res.status(400).json({ error: 'Ya existe un vendedor con esta cédula.' });
+      }
+  
+      // Crea un nuevo objeto Vendedor con los datos de la solicitud
+      const nuevoVendedor = new Vendedor(req.body);
+  
+      // Guarda el vendedor en la base de datos
+      const vendedorCreado = await nuevoVendedor.save();
+  
+      // Envía la respuesta con el vendedor creado
+      res.status(201).json(vendedorCreado);
     } catch (error) {
-        // Si ocurre un error, envía una respuesta de error
-        res.status(500).json({ error: 'No se pudo crear el vendedor.' });
+      res.status(500).json({ error: 'No se pudo crear el vendedor.' });
     }
-};
-
-// Función para actualizar un vendedor
-export const actualizarVendedor = async (req, res) => {
+  };
+  
+  export const actualizarVendedor = async (req, res) => {
     try {
-        // Obtiene el ID del vendedor desde los parámetros de la solicitud
-        const { id } = req.params;
-
-        // Actualiza el vendedor en la base de datos
-        const vendedorActualizado = await Vendedor.findByIdAndUpdate(id, req.body, { new: true });
-
-        // Si el vendedor existe, envía la respuesta con el vendedor actualizado
-        if (vendedorActualizado) {
-            res.status(200).json(vendedorActualizado);
-        } else {
-            // Si el vendedor no existe, envía una respuesta de error
-            res.status(404).json({ error: 'Vendedor no encontrado.' });
-        }
+      // Obtiene el ID del vendedor desde los parámetros de la solicitud
+      const { id } = req.params;
+  
+      // Verificar si ya existe otro vendedor con la misma cédula
+      const { cedula, ...datosVendedor } = req.body;
+      const vendedorExistente = await Vendedor.findOne({ cedula, _id: { $ne: id } });
+      if (vendedorExistente) {
+        return res.status(400).json({ error: 'Ya existe un vendedor con esta cédula.' });
+      }
+  
+      // Actualiza el vendedor en la base de datos
+      const vendedorActualizado = await Vendedor.findByIdAndUpdate(id, datosVendedor, { new: true });
+  
+      if (vendedorActualizado) {
+        res.status(200).json(vendedorActualizado);
+      } else {
+        res.status(404).json({ error: 'Vendedor no encontrado.' });
+      }
     } catch (error) {
-        // Si ocurre un error, envía una respuesta de error
-        res.status(500).json({ error: 'No se pudo actualizar el vendedor.' });
+      res.status(500).json({ error: 'No se pudo actualizar el vendedor.' });
     }
-};
+  };
 
 //actualizar estado vendedor
 export const actualizarestado = async (req, res) => {

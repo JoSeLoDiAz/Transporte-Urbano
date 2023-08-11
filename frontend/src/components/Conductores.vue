@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="container-fluid">
-      <div class="row">
+      <div class="row mt-3">
         <div class="col-sm-6">
           <h5 id="con"><i class="fas fa-users"></i> Conductor</h5>
         </div>
@@ -26,8 +26,8 @@
                 <th id="color" scope="col">Cedula</th>
                 <th id="color" scope="col">Telefono</th>
                 <th id="color" scope="col">Direccion</th>
-                <th id="color" scope="col">Clase_pase</th>
-                <th id="color" scope="col">Vigencia_pase</th>
+                <th id="color" scope="col">Clase Pase</th>
+                <th id="color" scope="col">Vigencia Pase</th>
                 <th id="color" scope="col">Estado</th>
                 <th id="color" scope="col">Opciones</th>
                 <th id="color" scope="col">Act / Des</th>
@@ -40,7 +40,7 @@
                 <td>{{ conductor.telefono }}</td>
                 <td>{{ conductor.direccion }}</td>
                 <td>{{ conductor.clase_pase }}</td>
-                <td>{{ conductor.vigencia_pase }}</td>
+                <td>{{ formatDate(conductor.vigencia_pase) }}</td>
                 <td :class="{ 'activo': conductor.estado, 'inactivo': !conductor.estado }">
                   {{ conductor.estado ? 'Activo' : 'Inactivo' }}
                 </td>
@@ -69,7 +69,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ bd == 0 ? "Editar Conductor" : "Guardar Conductor"}}</h1>
+              <h1 class="modal-title fs-2 " id="staticBackdropLabel">{{ bd == 0 ? "Editar Conductor" : "Guardar Conductor"}}</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="salir"></button>
             </div>
             <div class="modal-body">
@@ -97,22 +97,19 @@
                   aria-label="Recipient's username" aria-describedby="button-addon2">
               </div>
 
-              <label for="">Clase_pase</label>
+              <label for="">Clase Pase</label>
               <div class="input-group mb-3">
                 <input v-model="clase_pase" type="text" class="form-control" placeholder="Clase de pase..."
                   aria-label="Recipient's username" aria-describedby="button-addon2">
               </div>
 
-              <label for="">Vigencia_pase</label>
+              <label for="">Vigencia Pase</label>
               <div class="input-group mb-3">
-                <input v-model="vigencia_pase" type="date" class="form-control" placeholder="Vigencia de pase..."
+                <input v-model="vigencia_pase" type="date" class="form-control"
                   aria-label="Recipient's username" aria-describedby="button-addon2">
               </div>
             </div>
             <div class="modal-footer">
-              <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
-                <span>{{ errores }}</span>
-              </div>
               <button @click="salir" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
               <button type="button" class="btn btn-success" @click="guardarConductor">{{ bd == 1 ? "Guardar" : "Editar"
               }}
@@ -144,11 +141,14 @@ let bd = ref(1);
 let indice = ref(null);
 let errores =ref ('')
 
-const limpiarAlert = () => {
-  setTimeout(() => {
-    errores.value = ''; 
-  }, 2000);
-}
+// Filtro para formatear la fecha en "día-mes-año"
+const formatDate = (isoDate) => {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 async function pedirconductores() {
   try {
@@ -157,8 +157,16 @@ async function pedirconductores() {
   } catch (error) {
     console.log(error);
   }
-
 }
+
+//me toco formatear la fecha para el input
+const formatDateForInput = (isoDate) => {
+  const date = new Date(isoDate);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const editarConductor = async (conductorSeleccionado) => {
   try {
@@ -171,17 +179,16 @@ const editarConductor = async (conductorSeleccionado) => {
     telefono.value = conductorSeleccionado.telefono;
     direccion.value = conductorSeleccionado.direccion;
     clase_pase.value = conductorSeleccionado.clase_pase;
-    vigencia_pase.value = conductorSeleccionado.vigencia_pase;
+    vigencia_pase.value = formatDateForInput(conductorSeleccionado.vigencia_pase);
     estado.value = conductorSeleccionado.estado;
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errores.value = error.response.data.errors[0].msg;
     } else if (error.response.data) {
-      errores.value = error.response.data.msg;
+      errores.value = error.response.data.error;
     } else {
       errores.value = "Error interno para editar el conductor,\n Intenta Nuevamente";
     }
-    limpiarAlert();
   }
 };
 
@@ -195,7 +202,12 @@ const editEstado = async (conductorSeleccionado) => {
   }
 };
 
-
+const cerrarModal = () => {
+  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
+  if (closeButton) {
+    closeButton.click();
+  }
+};
 
 const guardarConductor = async () => {
   if (bd.value == 1) {
@@ -209,7 +221,9 @@ const guardarConductor = async () => {
         vigencia_pase: vigencia_pase.value,
         estado: estado.value
       };
+
       await useconductor.addConductor(nuevoConductor);
+      cerrarModal();
       pedirconductores();
       nombre.value = '';
       cedula.value = '';
@@ -217,15 +231,30 @@ const guardarConductor = async () => {
       direccion.value = '';
       clase_pase.value = '';
       vigencia_pase.value = '';
+
+      Swal.fire({
+       
+        icon: 'success',
+        title: 'Conductor Guardado',
+        text: 'El conductor se ha guardado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
+
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
       } else if (error.response.data) {
-        errores.value = error.response.data.msg;
+        errores.value = error.response.data.error;
       } else {
         errores.value = "Error interno para Guardar el conductor,\n Intenta Nuevamente";
-      }
-      limpiarAlert();
+      } 
+      Swal.fire({
+        icon: 'error',
+        title: errores.value,
+        timer:1500
+      });
+      
     }
   } else {
     try {
@@ -239,6 +268,7 @@ const guardarConductor = async () => {
         estado: estado.value
       };
       let r = await useconductor.editConductores(indice.value, nuevoConductor);
+      cerrarModal();
       pedirconductores();
       nombre.value = '';
       cedula.value = '';
@@ -246,15 +276,30 @@ const guardarConductor = async () => {
       direccion.value = '';
       clase_pase.value = '';
       vigencia_pase.value = '';
+
+     
+      Swal.fire({
+        
+        icon: 'success',
+        title: 'Conductor Editado',
+        text: 'El conductor se ha editado exitosamente.',
+        timer: 1500,
+        timerProgressBar: true
+      });
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
       } else if (error.response.data) {
-        errores.value = error.response.data.msg;
+        errores.value = error.response.data.error;
       } else {
         errores.value = "Error interno para Editar el conductor,\n Intenta Nuevamente";
       }
-      limpiarAlert();
+      Swal.fire({
+        icon: 'error',
+        title: errores.value,
+        timer:1500
+      });
+      
     }
   }
 };
@@ -296,9 +341,8 @@ onMounted(() => {
 }
 
 #color {
-  background-color: rgb(254, 183, 3);
+  background-color: #1e69e1dc;
 }
-
 .fa-solid.fa-user-pen {
   font-size: 22px;
   /* Ajusta el tamaño de la fuente según lo necesites */
@@ -323,8 +367,8 @@ onMounted(() => {
   --switch_width: 2em;
   --switch_height: 1em;
   --thumb_color: #e8e8e8;
-  --track_color: #15ff00;
-  --track_active_color: red;
+  --track_color: red;
+  --track_active_color: rgb(49, 242, 46);
   --outline_color: #000;
   font-size: 17px;
   position: relative;

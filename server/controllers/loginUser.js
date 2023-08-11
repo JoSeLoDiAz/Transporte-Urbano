@@ -50,10 +50,6 @@ const iniciarSesion = async (req, res) => {
       process.env.SECRETORPRIVATEKEY,
       { expiresIn: '1h' }
     );
-
-    // Mostrar los datos del usuario logueado en la consola
-  //  console.log('Usuario logueado:', user);
-
     res.json({ msg: 'Inicio de sesión exitoso.', token });
   } catch (error) {
     console.error(error);
