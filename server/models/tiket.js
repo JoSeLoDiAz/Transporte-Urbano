@@ -12,7 +12,7 @@ const tiketSchema = new mongoose.Schema(
 
     fecha_tiket: { type: Date, default: Date.now }
   },
-  { collection: "Ticketes" }
+  { collection: "Tiketes" }
 );
 
 const Tiket = mongoose.model("Tiket", tiketSchema);
