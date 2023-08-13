@@ -9,7 +9,7 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
       const response = await axios.post(`${BASE_URL}/vehiculos`, info);
       return response.data;
     } catch (error) {
-      throw new Error("Error al agregar el vehículo");
+      throw error;
     }
   };
 
@@ -18,7 +18,7 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
       const response = await axios.put(`${BASE_URL}/vehiculos/${id}`, datosActualizados);
       return response.data;
     } catch (error) {
-      throw new Error("Error al editar el vehículo");
+      throw error;
     }
   };
 
@@ -35,7 +35,6 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
   const traerVehiculos = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/vehiculos`);
-      console.log("API Response en store:", response.data); // Agrega esta línea
       return response.data;
     } catch (error) {
       console.log("Error al obtener los vehículos");
@@ -45,10 +44,7 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
 
   const obtenerNombreConductor = async (cedula_conductor) => {
     try {
-      console.log("Cédula del conductor:", cedula_conductor);
       const response = await axios.get(`${BASE_URL}/vehiculos/nombre_conductor/${cedula_conductor}`);
-      console.log("API Response en store:", response.data);
-
       // Verificar si la respuesta contiene el nombre y la cédula del conductor
       if (response.data && response.data.nombre && response.data.cedula) {
         return {
@@ -71,7 +67,6 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
       const response = await axios.get(`${BASE_URL}/conductores`);
       return response.data;
     } catch (error) {
-      console.error(error);
       throw new Error("Error al obtener los conductores");
     }
   };

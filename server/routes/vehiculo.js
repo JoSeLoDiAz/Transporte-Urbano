@@ -25,12 +25,13 @@ router.get('/nombre_conductor/:cedula_conductor', [
 ], obtenerNombreConductorPorCedula);
 
 router.post('/', [
-  check("numero_autobus", "El número de autobús es un campo requerido").notEmpty(),
-  check("numero_autobus").isLength({ max: 6 }).withMessage("El número de autobús debe tener máximo 6 caracteres"),
-  check("cedula_conductor", "La cédula del conductor es un campo requerido").notEmpty(),
   check("matricula_vehiculo", "La matrícula del vehículo es un campo requerido").notEmpty(),
+  check("matricula_vehiculo").isLength({ max: 8 }).withMessage("La matricula del vehiculo debe tener máximo 8 caracteres"),
+  check("numero_autobus", "El número de autobús es un campo requerido").notEmpty(),
+  check("numero_autobus").isLength({ max: 8 }).withMessage("El número de autobús debe tener máximo 8 caracteres"),
   check("numero_puestos", "El número de puestos es un campo requerido").notEmpty(),
   check("numero_puestos", "El número de puestos debe ser un número").isNumeric(),
+  check("cedula_conductor", "Debe escojer a un conductor").notEmpty(),
   check("marca", "La marca del vehículo es un campo requerido").notEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").notEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").notEmpty().isDate(),
@@ -42,12 +43,13 @@ router.put("/estado/:id", actualizarestado);
 
 router.put('/:id', [
   check('id', 'ID de vehículo inválido').isMongoId(),
-  check("numero_autobus", "El número de autobús es un campo requerido").notEmpty(),
-  check("numero_autobus").isLength({ max: 6 }).withMessage("El número de autobús debe tener máximo 6 caracteres"),
-  check("cedula_conductor", "La cédula del conductor es un campo requerido").notEmpty(),
   check("matricula_vehiculo", "La matrícula del vehículo es un campo requerido").notEmpty(),
+  check("matricula_vehiculo").isLength({ max: 8 }).withMessage("La matricula del vehiculo debe tener máximo 8 caracteres"),
+  check("numero_autobus", "El número de autobús es un campo requerido").notEmpty(),
+  check("numero_autobus").isLength({ max: 8 }).withMessage("El número de autobús debe tener máximo 8 caracteres"),
   check("numero_puestos", "El número de puestos es un campo requerido").notEmpty(),
   check("numero_puestos", "El número de puestos debe ser un número").isNumeric(),
+  check("cedula_conductor", "Debe escojer a un conductor").notEmpty(),
   check("marca", "La marca del vehículo es un campo requerido").notEmpty(),
   check("modelo", "El modelo del vehículo es un campo requerido").notEmpty(),
   check("fecha_vencimiento_seguro", "La fecha de vencimiento del seguro es un campo requerido").notEmpty().isDate(),

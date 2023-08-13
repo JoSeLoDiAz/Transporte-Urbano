@@ -23,6 +23,7 @@ router.get('/', obtenerRutas);
 router.get('/:id', obtenerRuta);
 
 router.post('/', [
+  check("nombre", "El nombre de la Ruta es un campo requerido").not().isEmpty(),
   check("origen", "El origen es un campo requerido").not().isEmpty(),
   check("destino", "El destino es un campo requerido").not().isEmpty(),
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
@@ -33,6 +34,7 @@ router.post('/', [
 ], crearRuta);
 router.put("/estado/:id", actualizarestado);
 router.put('/:id', [
+  check("nombre", "El nombre de la Ruta es un campo requerido").not().isEmpty(),
   check("origen", "El origen es un campo requerido").not().isEmpty(),
   check("destino", "El destino es un campo requerido").not().isEmpty(),
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),

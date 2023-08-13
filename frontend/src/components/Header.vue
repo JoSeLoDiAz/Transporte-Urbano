@@ -23,38 +23,38 @@
                 </div>
                 <div class="offcanvas-body">
 
-                  <router-link to="/home">
+                  <router-link to="/clientes">
                     <div class="d-grid gap-2">
                       <button class="btn btn-primary" type="button">Clientes</button>
                     </div>
                   </router-link>
 
-                  <router-link to="/hello">
+                  <router-link to="/conductores">
                     <div class="d-grid gap-2 mt-2">
-                      <button class="btn btn-primary" type="button">Conductor</button>
+                      <button class="btn btn-primary" type="button">Conductores</button>
                     </div>
                   </router-link>
 
-                  <router-link to="/cuatro">
+                  <router-link to="/rutas">
                     <div class="d-grid gap-2 mt-2">
                       <button type="button" class="btn btn-primary">Rutas</button>
                     </div>
                   </router-link>
 
-                  <router-link to="/vehiculo">
+                  <router-link to="/vehiculos">
                     <div class="d-grid gap-2 mt-2">
-                      <button type="button" class="btn btn-primary">Vehiculo</button>
+                      <button type="button" class="btn btn-primary">Vehiculos</button>
                     </div>
                   </router-link>
                   <router-link to="/vendertk">
                     <div class="d-grid gap-2 mt-2">
-                      <button type="button" class="btn btn-success">Vender</button>
+                      <button type="button" class="btn btn-success">Tikets</button>
                     </div>
                   </router-link>
 
                   <div class="mt-auto text-end">
-                    <button type="button" class="btn btn-light" style="margin-top: 120%;">
-                      <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 30px; "></i>  Cerrar Sesión
+                    <button type="button" class="btn btn-light" style="margin-top: 120%;" @click="cerrarSesion">
+                      <i class="fa-solid fa-arrow-right-from-bracket" style="font-size: 30px;"></i> Cerrar Sesión
                     </button>
                   </div>
                 </div>
@@ -82,8 +82,30 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const cerrarSesion = () => {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Deseas cerrar sesión?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      router.push('/login');
+    }
+  }).catch((error) => {
+    console.error('Error al mostrar el mensaje de confirmación:', error);
+  });
+};
 </script>
+
+
+
 
 <style scoped>
 #centrar {

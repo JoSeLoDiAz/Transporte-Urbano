@@ -22,15 +22,15 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th id="color" scope="col">Numero autobus</th>
-                                <th id="color" scope="col">Nombre Conductor</th>
-                                <th id="color" scope="col">Cedula Conductor</th>
                                 <th id="color" scope="col">Matricula</th>
-                                <th id="color" scope="col">Num Puestos</th>
+                                <th id="color" scope="col">Numero autobus</th>
+                                <th id="color" scope="col">Can Puestos</th>
                                 <th id="color" scope="col">Marca</th>
                                 <th id="color" scope="col">Modelo</th>
-                                <th id="color" scope="col">Fecha Vencimiento</th>
                                 <th id="color" scope="col">Numero Licencia</th>
+                                <th id="color" scope="col">Fecha Vencimiento</th>
+                                <th id="color" scope="col">Nombre Conductor</th>
+                                <th id="color" scope="col">Cedula</th>
                                 <th id="color" scope="col">Estado</th>
                                 <th id="color" scope="col">Opciones</th>
                                 <th id="color" scope="col">Act / Des</th>
@@ -38,15 +38,15 @@
                         </thead>
                         <tbody>
                             <tr v-for="(vehiculo, i) in vehiculos" :key="i">
-                                <td>{{ vehiculo.numero_autobus }}</td>
-                                <td>{{ vehiculo.cedula_conductor.nombre }}</td>
-                                <td>{{ vehiculo.cedula_conductor.cedula }}</td>
                                 <td>{{ vehiculo.matricula_vehiculo }}</td>
+                                <td>{{ vehiculo.numero_autobus }}</td>
                                 <td>{{ vehiculo.numero_puestos }}</td>
                                 <td>{{ vehiculo.marca }}</td>
                                 <td>{{ vehiculo.modelo }}</td>
-                                <td>{{ formatDate(vehiculo.fecha_vencimiento_seguro) }}</td>
                                 <td>{{ vehiculo.numero_licencia_transito }}</td>
+                                <td>{{ formatDate(vehiculo.fecha_vencimiento_seguro) }}</td>
+                                <td>{{ vehiculo.cedula_conductor.nombre }}</td>
+                                <td>{{ vehiculo.cedula_conductor.cedula }}</td>
                                 <td :class="{ activo: vehiculo.estado, inactivo: !vehiculo.estado }">
                                     {{ vehiculo.estado ? "Activo" : "Inactivo" }}
                                 </td>
@@ -86,25 +86,17 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <label for="">Número de autobús</label>
-                                    <div class="input-group mb-3">
-                                        <input v-model="numero_autobus" type="text" class="form-control"
-                                            placeholder="Número de autobús..." aria-label="Recipient's username"
-                                            aria-describedby="button-addon2" />
-                                    </div>
-
-                                    <label for="">Nombre del conductor</label>
-                                    <select v-model="cedula_conductor" class="form-control">
-                                        <option v-for="conductor in conductores" :key="conductor.cedula"
-                                            :value="conductor.cedula">
-                                            {{ conductor.nombre }}
-                                        </option>
-                                    </select>
-
                                     <label for="">Matrícula del vehículo</label>
                                     <div class="input-group mb-3">
                                         <input v-model="matricula_vehiculo" type="text" class="form-control"
                                             placeholder="Matrícula del vehículo..." aria-label="Recipient's username"
+                                            aria-describedby="button-addon2" />
+                                    </div>
+
+                                    <label for="">Número de autobús</label>
+                                    <div class="input-group mb-3">
+                                        <input v-model="numero_autobus" type="text" class="form-control"
+                                            placeholder="Número de autobús..." aria-label="Recipient's username"
                                             aria-describedby="button-addon2" />
                                     </div>
 
@@ -114,6 +106,15 @@
                                             placeholder="Número de puestos..." aria-label="Recipient's username"
                                             aria-describedby="button-addon2" />
                                     </div>
+
+                                    <label for="">Nombre del conductor</label>
+                                    <select v-model="cedula_conductor" class="form-control">
+                                        <option value="">Seleccione...</option>
+                                        <option v-for="conductor in conductores" :key="conductor.cedula"
+                                            :value="conductor.cedula">
+                                            {{ conductor.nombre }}
+                                        </option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="">Marca</label>
@@ -205,7 +206,7 @@ const obtenerNombreConductor = async (id) => {
 const obtenerConductores = async () => {
     try {
         const conductoresResponse = await vehiculosStore.obtenerConductores();
-        conductores.value = conductoresResponse.data;
+        conductores.value = conductoresResponse;
     } catch (error) {
         console.error(error);
     }
@@ -306,6 +307,11 @@ const guardarVehiculo = async () => {
             const conductorAsignado = vehiculos.value.find(vehiculo => vehiculo.cedula_conductor.cedula === cedula_conductor.value);
             if (conductorAsignado) {
                 errores.value = "Este conductor ya tiene un vehículo asignado";
+                Swal.fire({
+                    icon: 'error',
+                    title: errores.value,
+                    timer: 1500,
+                });
                 return;
             }
 
@@ -333,7 +339,7 @@ const guardarVehiculo = async () => {
                 timer: 1500,
             });
         } catch (error) {
-            manejarError(error);
+            erroresVehiculo(error)
         }
     } else {
         try {
@@ -359,9 +365,29 @@ const guardarVehiculo = async () => {
                 timer: 1500,
             });
         } catch (error) {
-            manejarError(error);
+            erroresVehiculo(error)
         }
     }
+};
+
+const erroresVehiculo = (error) => {
+    if (error.response && error.response.data) {
+        if (error.response.data.errors) {
+            const errorMsg = error.response.data.errors[0].msg || "Error interno para guardar/editar el vehículo";
+            errores.value = errorMsg;
+        } else if (error.response.data.error) {
+            errores.value = error.response.data.error;
+        } else {
+            errores.value = "Error interno para guardar/editar el vehículo";
+        }
+    } else {
+        errores.value = "Error interno para guardar/editar el vehículo";
+    }
+    Swal.fire({
+        icon: 'error',
+        title: errores.value,
+        timer: 1500,
+    });
 };
 
 const cerrarModal = () => {
@@ -369,20 +395,6 @@ const cerrarModal = () => {
     if (closeButton) {
         closeButton.click();
     }
-};
-
-const manejarError = (error) => {
-    if (error.message) {
-        errores.value = error.message;
-    } else {
-        errores.value = "Error interno, inténtalo nuevamente";
-    }
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errores.value,
-        timer: 1500,
-    });
 };
 
 // Llamar a las funciones necesarias cuando el componente se monte
