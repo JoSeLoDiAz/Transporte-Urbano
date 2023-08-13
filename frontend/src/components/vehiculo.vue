@@ -8,8 +8,8 @@
                 <div class="col-sm-3"></div>
                 <div class="col-sm-2 mt-2">
                     <div class="d-grid gap-2">
-                        <button @click="bd = 1" class="btn btn-success" type="button" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop">
+                        <button @click="bd = 1; limpiarCampos()" class="btn btn-success" type="button"
+                            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             <i class="fas fa-plus"></i> Nuevo
                         </button>
                     </div>
@@ -37,30 +37,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(array, i) in vehiculos" :key="i">
-                                <td>{{ array.numero_autobus }}</td>
-                                <td>{{ array.nombre_conductor }}</td>
-                                <td>{{ array.cedula_conductor }}</td>
-                                <td>{{ array.matricula_vehiculo }}</td>
-                                <td>{{ array.numero_puestos }}</td>
-                                <td>{{ array.marca }}</td>
-                                <td>{{ array.modelo }}</td>
-                                <td>{{ formatDate(array.fecha_vencimiento_seguro) }}</td>
-                                <td>{{ array.numero_licencia_transito }}</td>
-                                <td :class="{ activo: array.estado, inactivo: !array.estado }">
-                                    {{ array.estado ? "Activo" : "Inactivo" }}
+                            <tr v-for="(vehiculo, i) in vehiculos" :key="i">
+                                <td>{{ vehiculo.numero_autobus }}</td>
+                                <td>{{ vehiculo.cedula_conductor.nombre }}</td>
+                                <td>{{ vehiculo.cedula_conductor.cedula }}</td>
+                                <td>{{ vehiculo.matricula_vehiculo }}</td>
+                                <td>{{ vehiculo.numero_puestos }}</td>
+                                <td>{{ vehiculo.marca }}</td>
+                                <td>{{ vehiculo.modelo }}</td>
+                                <td>{{ formatDate(vehiculo.fecha_vencimiento_seguro) }}</td>
+                                <td>{{ vehiculo.numero_licencia_transito }}</td>
+                                <td :class="{ activo: vehiculo.estado, inactivo: !vehiculo.estado }">
+                                    {{ vehiculo.estado ? "Activo" : "Inactivo" }}
                                 </td>
 
                                 <td>
-                                    <button @click="editVehiculo(array)" id="editar" type="button" class="btn"
+                                    <button @click="editVehiculo(vehiculo)" id="editar" type="button" class="btn"
                                         data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                         <i class="fa-solid fa-user-pen"></i>
                                     </button>
                                 </td>
                                 <td>
                                     <label class="switch">
-                                        <input @click="editEstado(array)" v-model="array.estado" :checked="array.estado"
-                                            type="checkbox" />
+                                        <input @click="editEstado(vehiculo)" v-model="vehiculo.estado"
+                                            :checked="vehiculo.estado" type="checkbox" />
                                         <span class="slider"></span>
                                     </label>
                                 </td>
@@ -71,16 +71,17 @@
             </div>
 
             <!-- Modal -->
+            <!-- Modal -->
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-2" id="staticBackdropLabel">
-                                {{ bd == 0 ? "Editar Vehiculo" : "Guardar Vehiculo" }}
+                                {{ bd === 0 ? "Editar Vehiculo" : "Guardar Vehiculo" }}
                             </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                @click="limpiarCampos"> </button>
+                                @click="limpiarCampos"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -93,18 +94,12 @@
                                     </div>
 
                                     <label for="">Nombre del conductor</label>
-                                    <div class="input-group mb-3">
-                                        <input v-model="nombre_conductor" type="text" class="form-control"
-                                            placeholder="Nombre del conductor..." aria-label="Recipient's username"
-                                            aria-describedby="button-addon2" />
-                                    </div>
-
-                                    <label for="">Cédula del conductor</label>
-                                    <div class="input-group mb-3">
-                                        <input v-model="cedula_conductor" type="text" class="form-control"
-                                            placeholder="Cédula del conductor..." aria-label="Recipient's username"
-                                            aria-describedby="button-addon2" />
-                                    </div>
+                                    <select v-model="cedula_conductor" class="form-control">
+                                        <option v-for="conductor in conductores" :key="conductor.cedula"
+                                            :value="conductor.cedula">
+                                            {{ conductor.nombre }}
+                                        </option>
+                                    </select>
 
                                     <label for="">Matrícula del vehículo</label>
                                     <div class="input-group mb-3">
@@ -149,14 +144,10 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <!-- <div :class="['alert', 'alert-danger', { 'hidden': !errores }]" role="alert">
-                                <span>{{ errores }}</span>
-                            </div> -->
-                            <button @click="limpiarCampos" type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Cerrar
-                            </button>
-                            <button type="button" class="btn btn-success" @click="guardarvehiculo">
-                                {{ bd == 1 ? "Guardar" : "Editar" }}
+                            <button @click="limpiarCampos" type="button" class="btn btn-secondary"
+                                data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-success" @click="guardarVehiculo">
+                                {{ bd === 1 ? "Guardar" : "Editar" }}
                             </button>
                         </div>
                     </div>
@@ -169,15 +160,16 @@
 <script setup>
 import { useVehiculosStore } from "../stores/vehiculos";
 import { ref, onMounted } from "vue";
+// import Swal from "sweetalert2";
 
 const vehiculosStore = useVehiculosStore();
 const vehiculos = ref([]);
 
 let numero_autobus = ref("");
-let nombre_conductor = ref("");
 let cedula_conductor = ref("");
 let matricula_vehiculo = ref("");
 let numero_puestos = ref("");
+let conductores = ref([]);
 let marca = ref("");
 let modelo = ref("");
 let fecha_vencimiento_seguro = ref("");
@@ -187,44 +179,86 @@ let estado = ref(null);
 let bd = ref(1);
 let indice = ref(null);
 
-// Filtro para formatear la fecha en "día-mes-año"
-const formatDate = (isoDate) => {
-  const date = new Date(isoDate);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
+// Función para obtener el nombre del conductor a partir de la cédula
+const obtenerNombreConductor = async (id) => {
+    try {
+        const response = await vehiculosStore.obtenerNombreConductor(id);
+        if (response && response.data && response.data.cedula) {
+            const cedulaConductor = response.data.cedula;
+            console.log('Cédula del conductor:', cedulaConductor);
+            return response.data.nombre;
+        } else {
+            return 'Nombre Desconocido';
+        }
+    } catch (error) {
+        console.error(error);
+        return 'Nombre Desconocido';
+    }
 };
 
-async function pedirvehiculos() {
+
+
+
+
+
+// Función para obtener la lista de conductores
+const obtenerConductores = async () => {
     try {
-        const vehiculo = await vehiculosStore.traervehiculos();
-        vehiculos.value = vehiculo.data;
+        const conductoresResponse = await vehiculosStore.obtenerConductores();
+        conductores.value = conductoresResponse.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// Función para pedir los vehículos
+const pedirvehiculos = async () => {
+    try {
+        const vehiculoResponse = await vehiculosStore.traerVehiculos();
+
+        vehiculos.value = await Promise.all(vehiculoResponse.map(async (vehiculo) => {
+            const nombre_conductor = await obtenerNombreConductor(vehiculo.cedula_conductor.cedula); // Cambio aquí
+
+            return {
+                ...vehiculo,
+                nombre_conductor,
+            };
+        }));
     } catch (error) {
         console.log(error);
     }
-}
-
-//me toco formatear la fecha para el input
-const formatDateForInput = (isoDate) => {
-  const date = new Date(isoDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
 };
 
 
+
+// Función para formatear la fecha en "día-mes-año"
+const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
+
+// Función para formatear la fecha para el input
+const formatDateForInput = (isoDate) => {
+    const date = new Date(isoDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+// Función para editar un vehículo
 const editVehiculo = async (vehiculoSeleccionado) => {
     try {
         bd.value = 0;
         indice.value = vehiculoSeleccionado._id;
 
         // Asignar los valores del vehículo al formulario/modal de edición
-        numero_autobus.value = vehiculoSeleccionado.numero_autobus;
-        nombre_conductor.value = vehiculoSeleccionado.nombre_conductor;
-        cedula_conductor.value = vehiculoSeleccionado.cedula_conductor;
-        matricula_vehiculo.value = vehiculoSeleccionado.matricula_vehiculo;
+        numero_autobus.value = vehiculoSeleccionado.numero_autobus.toUpperCase();
+        cedula_conductor.value = vehiculoSeleccionado.cedula_conductor.cedula; // Obtener solo el valor de la cédula
+        matricula_vehiculo.value = vehiculoSeleccionado.matricula_vehiculo.toUpperCase();
         numero_puestos.value = vehiculoSeleccionado.numero_puestos;
         marca.value = vehiculoSeleccionado.marca;
         modelo.value = vehiculoSeleccionado.modelo;
@@ -234,23 +268,13 @@ const editVehiculo = async (vehiculoSeleccionado) => {
             vehiculoSeleccionado.numero_licencia_transito;
         estado.value = vehiculoSeleccionado.estado;
     } catch (error) {
-        if (error.response && error.response.data.errors) {
-            errores.value = error.response.data.errors[0].msg;
-            // console.log(`error0: ${errores.value}`);
-        } else if (error.response.data) {
-            errores.value = error.response.data.msg;
-            // console.log(`error0: ${errores.value}`);
-        } else {
-            errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
-        }
-
+        // Manejar el error aquí
     }
 };
 
-
+// Función para limpiar los campos del formulario
 const limpiarCampos = () => {
     numero_autobus.value = "";
-    nombre_conductor.value = "";
     cedula_conductor.value = "";
     matricula_vehiculo.value = "";
     numero_puestos.value = "";
@@ -263,114 +287,111 @@ const limpiarCampos = () => {
     indice.value = null;
 };
 
+// Función para editar el estado de un vehículo
+const editEstado = async (vehiculoSeleccionado) => {
+    try {
+        const nuevoEstado = !vehiculoSeleccionado.estado;
+        await vehiculosStore.editEstado(vehiculoSeleccionado._id, nuevoEstado);
+        vehiculoSeleccionado.estado = nuevoEstado;
+    } catch (error) {
+        // Manejar el error aquí
+    }
+};
 
-const editEstado = (vehiculoSeleccionado) => {
-    if (vehiculoSeleccionado.estado === true) {
-        vehiculosStore.editEstado(vehiculoSeleccionado._id, false);
+// Función para guardar un vehículo
+const guardarVehiculo = async () => {
+    if (bd.value === 1) {
+        try {
+            // Verificar si el conductor ya tiene un vehículo asignado
+            const conductorAsignado = vehiculos.value.find(vehiculo => vehiculo.cedula_conductor.cedula === cedula_conductor.value);
+            if (conductorAsignado) {
+                errores.value = "Este conductor ya tiene un vehículo asignado";
+                return;
+            }
+
+
+            const nuevoVehiculo = {
+                numero_autobus: numero_autobus.value.toUpperCase(),
+                cedula_conductor: cedula_conductor.value.toUpperCase(),
+                matricula_vehiculo: matricula_vehiculo.value.toUpperCase(),
+                numero_puestos: numero_puestos.value,
+                marca: marca.value.toUpperCase(),
+                modelo: modelo.value.toUpperCase(),
+                fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
+                numero_licencia_transito: numero_licencia_transito.value.toUpperCase(),
+                estado: estado.value,
+            };
+
+            await vehiculosStore.addVehiculo(nuevoVehiculo);
+            cerrarModal();
+            pedirvehiculos();
+            limpiarCampos();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Vehículo agregado correctamente',
+                timer: 1500,
+            });
+        } catch (error) {
+            manejarError(error);
+        }
     } else {
-        vehiculosStore.editEstado(vehiculoSeleccionado._id, true);
+        try {
+            const nuevoVehiculo = {
+                numero_autobus: numero_autobus.value.toUpperCase(),
+                cedula_conductor: cedula_conductor.value.toUpperCase(),
+                matricula_vehiculo: matricula_vehiculo.value.toUpperCase(),
+                numero_puestos: numero_puestos.value,
+                marca: marca.value.toUpperCase(),
+                modelo: modelo.value.toUpperCase(),
+                fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
+                numero_licencia_transito: numero_licencia_transito.value.toUpperCase(),
+            };
+
+            await vehiculosStore.editVehiculo(indice.value, nuevoVehiculo);
+            cerrarModal();
+            pedirvehiculos();
+            limpiarCampos();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Vehículo editado correctamente',
+                timer: 1500,
+            });
+        } catch (error) {
+            manejarError(error);
+        }
     }
 };
 
 const cerrarModal = () => {
-  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
-  if (closeButton) {
-    closeButton.click();
-  }
-};
-
-const guardarvehiculo = async () => {
-    console.log(bd.value);
-    if (bd.value === 1) {
-        try {
-            const nuevovehiculo = {
-                numero_autobus: numero_autobus.value,
-                nombre_conductor: nombre_conductor.value,
-                cedula_conductor: cedula_conductor.value,
-                matricula_vehiculo: matricula_vehiculo.value,
-                numero_puestos: numero_puestos.value,
-                marca: marca.value,
-                modelo: modelo.value,
-                fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
-                numero_licencia_transito: numero_licencia_transito.value,
-                estado: estado.value,
-            };
-            await vehiculosStore.addvehiculo(nuevovehiculo);
-            await Swal.fire({
-                icon: 'success',
-                title: 'Vehículo guardado correctamente',
-                timer: 1500
-            });
-            cerrarModal();
-            pedirvehiculos();
-            limpiarCampos();
-
-        } catch (error) {
-            if (error.response && error.response.data.errors) {
-                errores.value = error.response.data.errors[0].msg;
-                // console.log(`error0: ${errores.value}`);
-            } else if (error.response.data) {
-                errores.value = error.response.data.msg;
-                // console.log(`error0: ${errores.value}`);
-            } else {
-                errores.value = "Error interno para editar el Vehiculo,\n Intenta Nuevamente"
-            }
-            Swal.fire({
-                icon: 'error',
-                
-                title: errores.value,
-                timer: 1500
-            });
-
-        }
-    } else {
-        try {
-
-            const nuevovehiculo = {
-                numero_autobus: numero_autobus.value,
-                nombre_conductor: nombre_conductor.value,
-                cedula_conductor: cedula_conductor.value,
-                matricula_vehiculo: matricula_vehiculo.value,
-                numero_puestos: numero_puestos.value,
-                marca: marca.value,
-                modelo: modelo.value,
-                fecha_vencimiento_seguro: fecha_vencimiento_seguro.value,
-                numero_licencia_transito: numero_licencia_transito.value,
-            };
-            let r = await vehiculosStore.editVehiculo(indice.value, nuevovehiculo);
-            console.log(r);
-
-            await Swal.fire({
-                timer:1500,
-                icon: 'success',
-                title: 'Vehículo editado correctamente',
-            });
-            cerrarModal();
-            pedirvehiculos();
-            limpiarCampos();
-        } catch (error) {
-            if (error.response && error.response.data.errors) {
-                errores.value = error.response.data.errors[0].msg;
-            } else if (error.response.data) {
-                errores.value = error.response.data.msg;
-            } else {
-                errores.value = "Error interno para Editar el Vehiculo,\n Intenta Nuevamente";
-            }
-            Swal.fire({
-                icon: 'error',
-                timer:1500,
-                title: 'Error al editar el Vehículo',
-                text: errores.value,
-            });
-
-        }
+    const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
+    if (closeButton) {
+        closeButton.click();
     }
-
 };
+
+const manejarError = (error) => {
+    if (error.message) {
+        errores.value = error.message;
+    } else {
+        errores.value = "Error interno, inténtalo nuevamente";
+    }
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errores.value,
+        timer: 1500,
+    });
+};
+
+// Llamar a las funciones necesarias cuando el componente se monte
 onMounted(() => {
+    obtenerConductores();
     pedirvehiculos();
 });
 </script>
+
 
 <style scoped>
 /* desapareces el alerta de errores */
@@ -392,8 +413,8 @@ onMounted(() => {
     --switch_width: 2em;
     --switch_height: 1em;
     --thumb_color: #e8e8e8;
-    --track_color: #15ff00;
-    --track_active_color: red;
+    --track_color: red;
+    --track_active_color: #15ff00;
     --outline_color: #000;
     font-size: 17px;
     position: relative;

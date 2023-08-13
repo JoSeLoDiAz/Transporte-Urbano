@@ -1,46 +1,87 @@
-// stores/vehiculos.js
 import { defineStore } from "pinia";
 import axios from "axios";
 
+const BASE_URL = "http://localhost:4500";
+
 export const useVehiculosStore = defineStore("vehiculos", () => {
-  const addvehiculo = async (info) => {
+  const addVehiculo = async (info) => {
     try {
-      return await axios.post(`http://localhost:4500/vehiculos`, info);
+      const response = await axios.post(`${BASE_URL}/vehiculos`, info);
+      return response.data;
     } catch (error) {
-      throw error
-    }
-  };
-  const editVehiculo = async (id, rutas) => {
-    try {
-      return await axios.put(`http://localhost:4500/vehiculos/${id}`, rutas);
-    } catch (error) {
-      throw error
+      throw new Error("Error al agregar el vehículo");
     }
   };
 
+  const editVehiculo = async (id, datosActualizados) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/vehiculos/${id}`, datosActualizados);
+      return response.data;
+    } catch (error) {
+      throw new Error("Error al editar el vehículo");
+    }
+  };
 
   const editEstado = async (id, estado) => {
     try {
-      return await axios.put(`http://localhost:4500/vehiculos/estado/${id}`, { estado: estado });
+      const response = await axios.put(`${BASE_URL}/vehiculos/estado/${id}`, { estado });
+      return response.data;
     } catch (error) {
-      console.log(error);
-      return error;
+      console.error(error);
+      throw new Error("Error al cambiar el estado del vehículo");
     }
   };
 
-  const traervehiculos = async () => {
+  const traerVehiculos = async () => {
     try {
-      return await axios.get(`http://localhost:4500/vehiculos`);
+      const response = await axios.get(`${BASE_URL}/vehiculos`);
+      console.log("API Response en store:", response.data); // Agrega esta línea
+      return response.data;
     } catch (error) {
-      console.log("no sirve");
-      throw error; // Propagate the error further
+      console.log("Error al obtener los vehículos");
+      throw new Error("Error al obtener los vehículos");
+    }
+  };
+
+  const obtenerNombreConductor = async (cedula_conductor) => {
+    try {
+      console.log("Cédula del conductor:", cedula_conductor);
+      const response = await axios.get(`${BASE_URL}/vehiculos/nombre_conductor/${cedula_conductor}`);
+      console.log("API Response en store:", response.data);
+
+      // Verificar si la respuesta contiene el nombre y la cédula del conductor
+      if (response.data && response.data.nombre && response.data.cedula) {
+        return {
+          nombre: response.data.nombre,
+          cedula: response.data.cedula
+        };
+      } else {
+        return { nombre: 'Nombre Desconocido', cedula: 'Cédula Desconocida' };
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return { nombre: 'Nombre Desconocido', cedula: 'Cédula Desconocida' };
+    }
+  };
+
+
+
+  const obtenerConductores = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/conductores`);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error al obtener los conductores");
     }
   };
 
   return {
-    addvehiculo,
+    addVehiculo,
     editVehiculo,
     editEstado,
-    traervehiculos,
+    traerVehiculos,
+    obtenerNombreConductor,
+    obtenerConductores
   };
 });

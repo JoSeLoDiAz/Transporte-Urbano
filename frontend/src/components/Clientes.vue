@@ -180,8 +180,8 @@ const guardarCliente = async () => {
   if (bd.value === 1) {
     try {
       const nuevoCliente = {
-        nombre: nombre.value,
-        apellido: apellido.value,
+        nombre: nombre.value.toUpperCase(),
+        apellido: apellido.value.toUpperCase(),
         cc: cc.value,
         telefono: telefono.value,
         estado: estado.value
@@ -206,8 +206,6 @@ const guardarCliente = async () => {
     } catch (error) {
       if (error.response && error.response.data.errors) {
         errores.value = error.response.data.errors[0].msg;
-
-
       } else if (error.response.data) {
         errores.value = error.response.data.error;
       }
@@ -224,8 +222,8 @@ const guardarCliente = async () => {
   } else {
     try {
       const nuevoCliente = {
-        nombre: nombre.value,
-        apellido: apellido.value,
+        nombre: nombre.value.toUpperCase(),
+        apellido: apellido.value.toUpperCase(),
         cc: cc.value,
         telefono: telefono.value,
         estado: estado.value

@@ -6,6 +6,7 @@ const conductorSchema = new mongoose.Schema(
     cedula: { type: String },
     telefono: { type: String },
     direccion: { type: String },
+    numero_licencia: {type: String },
     clase_pase: { type: String },
     vigencia_pase: { type: Date },
     estado: { type: Boolean, default: true }

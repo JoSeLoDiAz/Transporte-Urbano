@@ -26,6 +26,7 @@
                 <th id="color" scope="col">Cedula</th>
                 <th id="color" scope="col">Telefono</th>
                 <th id="color" scope="col">Direccion</th>
+                <th id="color" scope="col">Numero de Licencia</th>
                 <th id="color" scope="col">Clase Pase</th>
                 <th id="color" scope="col">Vigencia Pase</th>
                 <th id="color" scope="col">Estado</th>
@@ -39,6 +40,7 @@
                 <td>{{ conductor.cedula }}</td>
                 <td>{{ conductor.telefono }}</td>
                 <td>{{ conductor.direccion }}</td>
+                <td>{{ conductor.numero_licencia }}</td>
                 <td>{{ conductor.clase_pase }}</td>
                 <td>{{ formatDate(conductor.vigencia_pase) }}</td>
                 <td :class="{ 'activo': conductor.estado, 'inactivo': !conductor.estado }">
@@ -97,6 +99,12 @@
                   aria-label="Recipient's username" aria-describedby="button-addon2">
               </div>
 
+              <label for="">Numero de Licencia</label>
+              <div class="input-group mb-3">
+                <input v-model="numero_licencia" type="text" class="form-control" placeholder="Numero Licencia..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
+
               <label for="">Clase Pase</label>
               <div class="input-group mb-3">
                 <input v-model="clase_pase" type="text" class="form-control" placeholder="Clase de pase..."
@@ -133,6 +141,7 @@ let nombre = ref('');
 let cedula = ref('');
 let telefono = ref('');
 let direccion = ref('');
+let numero_licencia =ref('')
 let clase_pase = ref('');
 let vigencia_pase = ref('')
 const useconductor = useConductorStore()
@@ -178,7 +187,8 @@ const editarConductor = async (conductorSeleccionado) => {
     cedula.value = conductorSeleccionado.cedula;
     telefono.value = conductorSeleccionado.telefono;
     direccion.value = conductorSeleccionado.direccion;
-    clase_pase.value = conductorSeleccionado.clase_pase;
+    numero_licencia.value = conductorSeleccionado.numero_licencia;
+    clase_pase.value = conductorSeleccionado.clase_pase.toUpperCase();
     vigencia_pase.value = formatDateForInput(conductorSeleccionado.vigencia_pase);
     estado.value = conductorSeleccionado.estado;
   } catch (error) {
@@ -213,11 +223,12 @@ const guardarConductor = async () => {
   if (bd.value == 1) {
     try {
       const nuevoConductor = {
-        nombre: nombre.value,
-        cedula: cedula.value,
+        nombre: nombre.value.toUpperCase(),
+        cedula: cedula.value.toUpperCase(),
         telefono: telefono.value,
-        direccion: direccion.value,
-        clase_pase: clase_pase.value,
+        direccion: direccion.value.toUpperCase(),
+        numero_licencia: numero_licencia.value.toUpperCase(),
+        clase_pase: clase_pase.value.toUpperCase(),
         vigencia_pase: vigencia_pase.value,
         estado: estado.value
       };
@@ -229,6 +240,7 @@ const guardarConductor = async () => {
       cedula.value = '';
       telefono.value = '';
       direccion.value = '';
+      numero_licencia.value = '';
       clase_pase.value = '';
       vigencia_pase.value = '';
 
@@ -259,11 +271,12 @@ const guardarConductor = async () => {
   } else {
     try {
       const nuevoConductor = {
-        nombre: nombre.value,
-        cedula: cedula.value,
+        nombre: nombre.value.toUpperCase(),
+        cedula: cedula.value.toUpperCase(),
         telefono: telefono.value,
-        direccion: direccion.value,
-        clase_pase: clase_pase.value,
+        direccion: direccion.value.toUpperCase(),
+        numero_licencia: numero_licencia.value.toUpperCase(),
+        clase_pase: clase_pase.value.toUpperCase(),
         vigencia_pase: vigencia_pase.value,
         estado: estado.value
       };
@@ -274,6 +287,7 @@ const guardarConductor = async () => {
       cedula.value = '';
       telefono.value = '';
       direccion.value = '';
+      numero_licencia.value = '';
       clase_pase.value = '';
       vigencia_pase.value = '';
 
@@ -310,6 +324,7 @@ function salir() {
   cedula.value = '';
   telefono.value = '';
   direccion.value = '';
+  numero_licencia.value = '';
   clase_pase.value = '',
     vigencia_pase.value = '';
 }

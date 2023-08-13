@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const rutaSchema = new mongoose.Schema(
   {
+    nombre: {type: String},
     origen: { type: String },
     destino: { type: String },
     hora_salida: { type: String },

@@ -29,6 +29,7 @@
             <thead>
               <tr>
 
+                <th id="color" scope="col">Nombre</th>
                 <th id="color" scope="col">Origen</th>
                 <th id="color" scope="col">Destino</th>
                 <th id="color" scope="col">Hora Salida</th>
@@ -43,6 +44,7 @@
             <tbody>
               <tr v-for="(ruta, index) in rutas" :key="index">
 
+                <td>{{ ruta.nombre }}</td>
                 <td>{{ ruta.origen }}</td>
                 <td>{{ ruta.destino }}</td>
                 <td>{{ ruta.hora_salida }}</td>
@@ -88,12 +90,16 @@
             </div>
             <div class="modal-body">
 
+              <label for="">Nombre de la Ruta</label>
+              <div class="input-group mb-3 ">
+                <input v-model="nombre" type="text" class="form-control" placeholder="Nombre..."
+                  aria-label="Recipient's username" aria-describedby="button-addon2">
+              </div>
+
               <label for="">Origen</label>
               <div class="input-group mb-3 ">
-
                 <input v-model="origen" type="text" class="form-control" placeholder="origen..."
                   aria-label="Recipient's username" aria-describedby="button-addon2">
-
               </div>
 
               <label for="">Destino</label>
@@ -155,7 +161,8 @@ import { ref, onMounted } from 'vue';
 
 
 let rutas = ref([]);
-let estado = ref()
+let estado = ref();
+let nombre = ref('');
 let origen = ref('');
 let destino = ref('');
 let hora_salida = ref('');
@@ -199,6 +206,7 @@ const editarrutas = async (rutaSeleccionada) => {
     indice.value = rutaSeleccionada._id;
 
     // Asignar los valores de la ruta al formulario/modal de edición
+    nombre.value = rutaSeleccionada.nombre;
     origen.value = rutaSeleccionada.origen;
     destino.value = rutaSeleccionada.destino;
     hora_salida.value = rutaSeleccionada.hora_salida;
@@ -236,6 +244,7 @@ const cerrarModal = () => {
 };
 
 function salir() {
+  nombre.value = '';
   origen.value = '';
     destino.value = '';
     hora_salida.value = '';
@@ -249,18 +258,20 @@ const guardarRuta = async () => {
   if (bd.value == 1) {
     try {
       const nuevaRuta = {
-        origen: origen.value,
-        destino: destino.value,
+        nombre: nombre.value.toUpperCase(),
+        origen: origen.value.toUpperCase(),
+        destino: destino.value.toUpperCase(),
         hora_salida: hora_salida.value,
         fecha_salida: fecha_salida.value,
-        tiempo_estimado_viaje: tiempo_estimado_viaje.value,
-        descripcion: descripcion.value,
+        tiempo_estimado_viaje: tiempo_estimado_viaje.value.toUpperCase(),
+        descripcion: descripcion.value.toUpperCase(),
         estado: estado.value
       }
       await userutas.addRutas(nuevaRuta);
       cerrarModal()
       pedirRutas();
 
+      nombre.value = '';
       origen.value = '';
       destino.value = '';
       hora_salida.value = '';
@@ -297,12 +308,13 @@ const guardarRuta = async () => {
   } else {
   try {
     const nuevaRuta = {
-      origen: origen.value,
-      destino: destino.value,
+      nombre: nombre.value.toUpperCase(),
+      origen: origen.value.toUpperCase(),
+      destino: destino.value.toUpperCase(),
       hora_salida: hora_salida.value,
       fecha_salida: fecha_salida.value,
-      tiempo_estimado_viaje: tiempo_estimado_viaje.value,
-      descripcion: descripcion.value,
+      tiempo_estimado_viaje: tiempo_estimado_viaje.value.toUpperCase(),
+      descripcion: descripcion.value.toUpperCase(),
       estado: estado.value
     };
     let r = await userutas.editrutas(indice.value, nuevaRuta);
@@ -310,6 +322,7 @@ const guardarRuta = async () => {
     pedirRutas();
 
 
+    nombre.value = '';
     origen.value = '';
     destino.value = '';
     hora_salida.value = '';
