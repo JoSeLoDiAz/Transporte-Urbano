@@ -161,7 +161,6 @@
 <script setup>
 import { useVehiculosStore } from "../stores/vehiculos";
 import { ref, onMounted } from "vue";
-// import Swal from "sweetalert2";
 
 const vehiculosStore = useVehiculosStore();
 const vehiculos = ref([]);
@@ -399,8 +398,9 @@ const cerrarModal = () => {
 
 // Llamar a las funciones necesarias cuando el componente se monte
 onMounted(() => {
-    obtenerConductores();
     pedirvehiculos();
+    obtenerConductores();
+
 });
 </script>
 

@@ -27,7 +27,6 @@ router.post('/', [
   check("origen", "El origen es un campo requerido").not().isEmpty(),
   check("destino", "El destino es un campo requerido").not().isEmpty(),
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
-  check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
   check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"),validarResultados
@@ -38,7 +37,6 @@ router.put('/:id', [
   check("origen", "El origen es un campo requerido").not().isEmpty(),
   check("destino", "El destino es un campo requerido").not().isEmpty(),
   check("hora_salida", "La hora de salida es un campo requerido").not().isEmpty(),
-  check("fecha_salida", "La fecha de salida es un campo requerido").not().isEmpty().isDate(),
   check("tiempo_estimado_viaje", "El tiempo estimado de viaje es un campo requerido").not().isEmpty(),
   check("descripcion", "La descripción es un campo requerido").not().isEmpty(),
   check("descripcion").isLength({ max: 255 }).withMessage("La descripción debe tener máximo 255 caracteres"),validarResultados

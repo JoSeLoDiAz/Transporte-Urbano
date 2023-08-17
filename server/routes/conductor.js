@@ -20,8 +20,9 @@ router.get('/:id', obtenerConductor);
 router.post('/', [
   check("nombre", "El nombre es un campo requerido").not().isEmpty(),
   check("cedula", "El número de cédula es un campo requerido").not().isEmpty(),
-  check("cedula").isLength({ min: 6 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
+  check("cedula").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
+  check("telefono").isLength({ min: 8 }).withMessage("El número de telefono debe tener al menos 8 dígitos"),
   check("telefono").isLength({ max: 15 }).withMessage("El número de teléfono debe tener máximo 15 caracteres"),
   check("direccion", "La dirección es un campo requerido").not().isEmpty(),
   check("direccion").isLength({ max: 255 }).withMessage("La dirección debe tener máximo 255 caracteres"),
@@ -41,6 +42,7 @@ router.put('/:id', [
   check("cedula", "El número de cédula es un campo requerido").not().isEmpty(),
   check("cedula").isLength({ min: 8 }).withMessage("El número de cédula debe tener al menos 8 dígitos"),
   check("telefono", "El teléfono es un campo requerido").not().isEmpty(),
+  check("telefono").isLength({ min: 8 }).withMessage("El número de telefono debe tener al menos 8 dígitos"),
   check("telefono").isLength({ max: 15 }).withMessage("El número de teléfono debe tener máximo 15 caracteres"),
   check("direccion", "La dirección es un campo requerido").not().isEmpty(),
   check("direccion").isLength({ max: 255 }).withMessage("La dirección debe tener máximo 255 caracteres"),

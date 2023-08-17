@@ -26,10 +26,20 @@ export const useVenderStore = defineStore("venderTiket", () => {
     }
   };
 
+  // Nueva función para obtener asientos vendidos
+  const obtenerAsientosVendidos = async (rutaId, fechaVenta) => {
+    try {
+      return await axios.get(`http://localhost:4500/tikets/asientos-vendidos/${rutaId}/${fechaVenta}`);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     addTiket,
     traerTikets,
-    editTikets
+    editTikets,
+    obtenerAsientosVendidos,
   };
 });
 
