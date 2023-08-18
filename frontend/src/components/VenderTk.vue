@@ -39,25 +39,25 @@
                 </option>
               </select>
               <br>
-              <!-- Campo de entrada para la hora -->
+
               <b>
-                <label for="">Hora</label>
+                <label for="">Hora de Salida</label>
               </b>
-              <input :value="horaSalidaDeRutaSeleccionada" type="time" class="form-control" readonly>
+              <p>{{ horaSalidaDeRutaSeleccionada }}</p>
               <div>
                 <label for="fechaSalida"><b>Fecha de Salida</b></label>
                 <input v-model="fechaSalida" type="date" class="form-control" id="fechaSalida" />
               </div>
               <b><!-- Botón de Verificación -->
                 <button @click="verificarBoletosVendidos" :disabled="verificandoBoletos" class="btn btn-primary mt-3">
-                  {{ verificandoBoletos ? 'Verificando...' : 'Verificar Boletos Vendidos' }}
+                  {{ verificandoBoletos ? 'Verificando Boletos Vendidos...' : 'Verificar Boletos Vendidos' }}
                 </button>
 
               </b>
             </div>
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-7">
           <div>
             <button v-for="numeroAsiento in numerosDeAsiento" :key="numeroAsiento"
               @click="seleccionarAsiento(numeroAsiento)" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
@@ -65,27 +65,74 @@
               :class="{ 'btn btn-light mt-4 position-relative': true, 'btn-asiento-vendido': asientosVendidos.includes(numeroAsiento) }"
               :disabled="asientosVendidos.includes(numeroAsiento) || !rutaSeleccionada || !vehiculoSeleccionado || !fechaSalida">
               <i class="fa-solid fa-couch"></i>
-              <span
-                class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border  border-light rounded-circle"
-                id="a">
+              <span class="position-absolute top-0 start-100 translate-middle p-2 border   border-dark rounded-circle"
+                :class="{ 'bg-success': asientosVendidos.includes(numeroAsiento) }" id="a">
                 {{ numeroAsiento }}
                 <span class="visually-hidden"></span>
               </span>
             </button>
-  
+
+
 
 
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <h4 id="asi">Asientos Vendidos</h4>
-          <div style="overflow-y: auto; max-height: 450px; margin-top: 10px;">
-            <p v-for="asientoVendido in asientosVendidos" :key="asientoVendido.num_tiket">
+          <div style="overflow-y: auto; max-height: 470px; margin-top: 10px;">
+
+            <div v-for="asientoVendido in pintarVendidos" :key="asientoVendido.num_tiket" class="card mt-2">
+              <div class="card-header">
+                <b>
+                  Puesto:
+                </b>
+                <b style="color: green;">
+                  {{ asientoVendido.numero_de_puesto }}
+                </b>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-9">
+                    <p class="card-text">
+                      <b>
+                        Pasajero:
+                      </b>
+                      {{ asientoVendido.cliente.nombre }}
+                      <br>
+                      <b>
+                        Apellido:
+                      </b>
+                      {{ asientoVendido.cliente.apellido }}
+                      <br>
+                      <b>
+                        Cedula:
+                      </b>
+                      {{ asientoVendido.cliente.cc }}
+                    </p>
+
+                  </div>
+                  <div class="col-md-3">
+                    <p class="card-text">
+                      <button type="button" class="btn btn-light mt-2" @click="descargarPDF(asientoVendido)">📥</button>
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+            <!-- <div v-for="asientoVendido in pintarVendidos" :key="asientoVendido.num_tiket">
               <p>Puesto: {{ asientoVendido.numero_de_puesto }}</p>
-              <p>Valor: {{ asientoVendido.valor_puesto }}</p>
-              <p>Pasajero: {{ asientoVendido.cliente }}</p>
-            </p>
+              <p>Pasajero: {{ asientoVendido.cliente.nombre }}</p>
+              <p>Apellido: {{ asientoVendido.cliente.apellido }}</p>
+              <p>Cedula: {{ asientoVendido.cliente.cc }}</p>
+              <hr>
+            </div> -->
+
+
           </div>
+
 
 
 
@@ -129,7 +176,7 @@
   
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-
+import jsPDF from 'jspdf';
 import { useVenderStore } from '../stores/tiketes';
 import { useRutasStore } from '../stores/rutas';
 import { useVehiculosStore } from '../stores/vehiculos';
@@ -147,6 +194,12 @@ const rutaSeleccionada = ref("");
 const vehiculoSeleccionado = ref("");
 const rutas = ref([]);
 const asientosVendidos = ref([]);
+const pintarVendidos = ref([])
+
+console.log("ok");
+
+console.log("asientos vendidos");
+console.log(asientosVendidos);
 const vehiculos = ref([]);
 const fechaSalida = ref('');
 const asientoVendido = ref(false);
@@ -165,11 +218,15 @@ const seleccionarAsiento = (numeroAsiento) => {
   numeroAsientoSeleccionado.value = numeroAsiento;
 };
 
+
+
 // Obtener la hora de salida de la ruta seleccionada
 const horaSalidaDeRutaSeleccionada = computed(() => {
   const ruta = rutas.value.find(ruta => ruta._id === rutaSeleccionada.value);
   return ruta ? ruta.hora_salida : 'Hora no disponible';
 });
+
+
 
 // Función para obtener las rutas
 const obtenerRutas = async () => {
@@ -213,20 +270,18 @@ const numerosDeAsiento = computed(() => {
   return [];
 });
 
-// Función para obtener los asientos vendidos
+
 const obtenerAsientosVendidos = async () => {
   if (rutaSeleccionada.value && vehiculoSeleccionado.value && fechaSalida.value) {
-    try {
-      
-      const response = await venderStore.obtenerAsientosVendidos(rutaSeleccionada.value, fechaSalida.value);
-      console.log("res", response);
-      asientosVendidos.value = response.data.map(asiento => asiento.numero_de_puesto);
+    await venderStore.obtenerAsientosVendidos(rutaSeleccionada.value, fechaSalida.value).then((res) => {
+      asientosVendidos.value = res.data.map(asiento => asiento.numero_de_puesto);
       console.log(asientosVendidos.value);
-    } catch (error) {
-      console.error(error);
-    }
+      pintarVendidos.value = res.data
+      console.log(pintarVendidos.value);
+    })
   }
-};
+}
+
 
 const verificarBoletosVendidos = async () => {
   if (rutaSeleccionada.value && vehiculoSeleccionado.value && fechaSalida.value) {
@@ -247,6 +302,7 @@ const verificarBoletosVendidos = async () => {
         icon: 'success',
         title: 'Éxito',
         text: 'Los boletos vendidos han sido verificados',
+        timer: 1500
       });
     } catch (error) {
       console.error(error);
@@ -258,6 +314,7 @@ const verificarBoletosVendidos = async () => {
       icon: 'warning',
       title: 'Campos Incompletos',
       text: 'Por favor, seleccione una ruta, un vehículo y una fecha de salida',
+      timer: 1500
     });
   }
 };
@@ -296,6 +353,7 @@ const confirmarDatos = async () => {
       icon: 'error',
       title: 'Error',
       text: 'Por favor, asigne una ruta primero',
+      timer: 1500
     });
     return;
   } else if (!cedula.value) {
@@ -303,6 +361,7 @@ const confirmarDatos = async () => {
       icon: 'error',
       title: 'Error',
       text: 'Por favor, ingrese una cédula válida',
+      timer: 1500
     });
     return;
   } else if (valorPuesto.value === "") {
@@ -310,6 +369,7 @@ const confirmarDatos = async () => {
       icon: 'error',
       title: 'Error',
       text: 'Por favor, ingrese un valor',
+      timer: 1500
     });
     return;
   } else if (fechaSalida.value === "") {
@@ -317,6 +377,7 @@ const confirmarDatos = async () => {
       icon: 'error',
       title: 'Error',
       text: 'Por favor, elija una fecha de salida',
+      timer: 1500
     });
     return;
   }
@@ -375,7 +436,11 @@ const confirmarDatos = async () => {
           icon: 'success',
           title: 'Éxito',
           text: 'El ticket se ha guardado correctamente',
+          timer: 1500
         });
+
+        cedula.value = ''
+        valorPuesto.value = ''
         // Ticket vendido exitosamente
         asientoVendido.value = true;
 
@@ -387,6 +452,7 @@ const confirmarDatos = async () => {
           icon: 'error',
           title: 'Error',
           text: 'Ha ocurrido un error al guardar el ticket',
+          timer: 1500
         });
       }
     }
@@ -396,10 +462,52 @@ const confirmarDatos = async () => {
       icon: 'info',
       title: 'Cédula no encontrada',
       text: 'La cédula no existe en la base de datos de clientes. Por favor, registre a la persona.',
+      timer: 1500
     });
   }
 };
 
+
+const descargarPDF = (asientoVendido) => {
+  const doc = new jsPDF({
+    orientation: 'portrait', // Orientación del documento (vertical)
+    unit: 'mm', // Unidad de medida (milímetros)
+    format: [100, 150], // Tamaño del documento (ancho, alto)
+  });
+
+  doc.setFontSize(16);
+  const titulo = 'TICKET DE VIAJE';
+  const tituloWidth = doc.getStringUnitWidth(titulo) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+  const tituloX = (doc.internal.pageSize.width - tituloWidth) / 2; // Centrar el título en la página
+  doc.text(titulo, tituloX, 10);
+
+  // Contenido del ticket
+  doc.setFontSize(12);
+  // Formatear la fecha antes de mostrarla
+  const fechaSalidaFormateada = asientoVendido.fecha_salida.split('T')[0]; // Obtener la parte de la fecha
+
+  // Mostrar los campos existentes
+  doc.text(`Puesto: ${asientoVendido.numero_de_puesto}`, 10, 30);
+  doc.text(`Pasajero: ${asientoVendido.cliente.nombre} ${asientoVendido.cliente.apellido}`, 10, 40);
+  doc.text(`Cédula: ${asientoVendido.cliente.cc}`, 10, 50);
+  doc.text(`Fecha de Salida: ${fechaSalidaFormateada}`, 10, 60); // Usar la fecha formateada
+  doc.text(`Ruta: ${asientoVendido.ruta.nombre}`, 10, 70);
+  doc.text(`Hora salida: ${asientoVendido.ruta.hora_salida}`, 10, 80);
+ 
+
+
+  // Línea divisoria
+  doc.setLineWidth(0.5);
+  doc.line(10, 85, 90, 85);
+
+  // Información adicional
+  doc.setFontSize(10);
+  doc.text('Gracias por elegir nuestro servicio.', 10, 100);
+  doc.text('¡Buen viaje te desea Trans-Urban!', 10, 110);
+
+  
+  doc.save(`ticket_Puesto_${asientoVendido.numero_de_puesto}.pdf`);
+};
 
 // Llamar a las funciones necesarias cuando el componente se monte
 onMounted(() => {
@@ -411,10 +519,10 @@ onMounted(() => {
 
   
 <style scoped>
-
 .bg-success {
   background-color: green;
 }
+
 #icono {
   box-shadow: 0px 12px 12px 12px rgba(0, 0, 0, 0.364);
 
