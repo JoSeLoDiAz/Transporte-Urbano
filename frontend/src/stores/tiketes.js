@@ -4,7 +4,7 @@ import axios from "axios";
 export const useVenderStore = defineStore("venderTiket", () => {
   const addTiket = async (info) => {
     try {
-      return await axios.post(`http://localhost:4500/tikets`, info);
+      return await axios.post(`https://transurban.onrender.com/tikets`, info);
     } catch (error) {
       throw error
     }
@@ -12,7 +12,7 @@ export const useVenderStore = defineStore("venderTiket", () => {
 
   const traerTikets = async () => {
     try {
-      return await axios.get(`http://localhost:4500/tikets`);
+      return await axios.get(`https://transurban.onrender.com/tikets`);
     } catch (error) {
       console.log("no sirve");
     }
@@ -20,7 +20,7 @@ export const useVenderStore = defineStore("venderTiket", () => {
 
   const editTikets = async (id, tikets) => {
     try {
-      return await axios.put(`http://localhost:4500/tikets/${id}`, tikets);
+      return await axios.put(`https://transurban.onrender.com/tikets/${id}`, tikets);
     } catch (error) {
       throw error;
     }
@@ -29,7 +29,7 @@ export const useVenderStore = defineStore("venderTiket", () => {
   // Nueva función para obtener asientos vendidos
   const obtenerAsientosVendidos = async (rutaId, fechaVenta) => {
     try {
-      return await axios.get(`http://localhost:4500/tikets/asientos-vendidos/${rutaId}/${fechaVenta}`);
+      return await axios.get(`https://transurban.onrender.com/tikets/asientos-vendidos/${rutaId}/${fechaVenta}`);
     } catch (error) {
       throw error;
     }

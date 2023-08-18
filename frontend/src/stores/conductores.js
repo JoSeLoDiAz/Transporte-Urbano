@@ -4,7 +4,7 @@ import axios from "axios";
 export const useConductorStore = defineStore("conductores", () => {
   const addConductor = async (info) => {
     try {
-      return await axios.post(`http://localhost:4500/conductores`, info);
+      return await axios.post(`https://transurban.onrender.com/conductores`, info);
     } catch (error) {
       throw error
     }
@@ -12,7 +12,7 @@ export const useConductorStore = defineStore("conductores", () => {
 
   const traerconductores = async () => {
     try {
-      return await axios.get(`http://localhost:4500/conductores`);
+      return await axios.get(`https://transurban.onrender.com/conductores`);
     } catch (error) {
       console.log("no sirve");
     }
@@ -20,14 +20,14 @@ export const useConductorStore = defineStore("conductores", () => {
 
   const editConductores = async (id, conductores) => {
     try {
-      return await axios.put(`http://localhost:4500/conductores/${id}`, conductores);
+      return await axios.put(`https://transurban.onrender.com/conductores/${id}`, conductores);
     } catch (error) {
       throw error;
     }
   };
   const editEstado = async (id, estado) => {
     try {
-      return await axios.put(`http://localhost:4500/conductores/estado/${id}`, {estado:estado});
+      return await axios.put(`https://transurban.onrender.com/conductores/estado/${id}`, {estado:estado});
     } catch (error) {
       throw error;
     }

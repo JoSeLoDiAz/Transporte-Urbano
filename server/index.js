@@ -13,6 +13,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors()); // Habilitar CORS para todas las solicitudes
+app.use(express.static('public'))
 
 mongoose.connect(process.env.bdMongo)
   .then(() => console.log(`Conectado a la Base de MongoDb atlas`, process.env.bdMongo))

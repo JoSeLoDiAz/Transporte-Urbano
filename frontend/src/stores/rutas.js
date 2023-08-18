@@ -4,14 +4,14 @@ import axios from "axios";
 export const useRutasStore = defineStore("rutas", () => {
   const addRutas = async (info) => {
     try {
-      return await axios.post(`http://localhost:4500/rutas`, info);
+      return await axios.post(`https://transurban.onrender.com/rutas`, info);
     } catch (error) {
       throw error
     }
   };
   const editrutas = async (id, rutas) => {
     try {
-      return await axios.put(`http://localhost:4500/rutas/${id}`, rutas);
+      return await axios.put(`https://transurban.onrender.com/rutas/${id}`, rutas);
     } catch (error) {
       throw error
     }
@@ -20,7 +20,7 @@ export const useRutasStore = defineStore("rutas", () => {
 
   const editEstado = async (id, estado) => {
     try {
-      return await axios.put(`http://localhost:4500/rutas/estado/${id}`, { estado: estado });
+      return await axios.put(`https://transurban.onrender.com/rutas/estado/${id}`, { estado: estado });
     } catch (error) {
       console.log(error);
       return error;
@@ -30,7 +30,7 @@ export const useRutasStore = defineStore("rutas", () => {
 
   const traerRutas = async () => {
     try {
-      return await axios.get(`http://localhost:4500/rutas`);
+      return await axios.get(`https://transurban.onrender.com/rutas`);
     } catch (error) {
       console.log("no sirve");
     }

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:4500";
+const BASE_URL = "https://transurban.onrender.com";
 
 export const useVehiculosStore = defineStore("vehiculos", () => {
   const addVehiculo = async (info) => {

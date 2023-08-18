@@ -4,7 +4,7 @@ import axios from "axios";
 export const useClientStore = defineStore("clientes", () => {
   const addClient = async (info) => {
     try {
-      return await axios.post(`http://localhost:4500/clientes`, info);
+      return await axios.post(`https://transurban.onrender.com/clientes`, info);
     } catch (error) {
       // console.log(error);
       throw error;
@@ -13,7 +13,7 @@ export const useClientStore = defineStore("clientes", () => {
 
   const traerclientes = async () => {
     try {
-      return await axios.get(`http://localhost:4500/clientes`);
+      return await axios.get(`https://transurban.onrender.com/clientes`);
     } catch (error) {
       console.log("No se Pudieron traer los clientes", error);
     }
@@ -21,14 +21,14 @@ export const useClientStore = defineStore("clientes", () => {
 
   const editClient = async (id, cliente) => {
     try {
-      return await axios.put(`http://localhost:4500/clientes/${id}`, cliente);
+      return await axios.put(`https://transurban.onrender.com/clientes/${id}`, cliente);
     } catch (error) {
       throw error;
     }
   };
   const editEstado = async (id, estado) => {
     try {
-      return await axios.put(`http://localhost:4500/clientes/estado/${id}`, {estado:estado});
+      return await axios.put(`https://transurban.onrender.com/clientes/estado/${id}`, {estado:estado});
     } catch (error) {
       console.log(error);
       return error;
