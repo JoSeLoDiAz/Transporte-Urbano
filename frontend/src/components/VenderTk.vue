@@ -64,7 +64,7 @@
               id="icono" type="button"
               :class="{ 'btn btn-light mt-4 position-relative': true, 'btn-asiento-vendido': asientosVendidos.includes(numeroAsiento) }"
               :disabled="asientosVendidos.includes(numeroAsiento) || !rutaSeleccionada || !vehiculoSeleccionado || !fechaSalida">
-              <i class="fa-solid fa-couch"></i>
+              <i class="fa-solid fa-couch " :style="{ color: asientosVendidos.includes(numeroAsiento) ? 'rgb(6, 85, 6)' : 'inherit' }"></i>
               <span class="position-absolute top-0 start-100 translate-middle p-2 border   border-dark rounded-circle"
                 :class="{ 'bg-success': asientosVendidos.includes(numeroAsiento) }" id="a">
                 {{ numeroAsiento }}
@@ -347,6 +347,7 @@ const cerrarModal = () => {
   }
 };
 
+
 const confirmarDatos = async () => {
   if (rutaSeleccionada.value === "") {
     Swal.fire({
@@ -422,8 +423,20 @@ const confirmarDatos = async () => {
       confirmButtonText: 'Confirmar',
     });
 
-    // Si el usuario confirma, guardar el ticket en la base de datos
+    // Si el usuario confirma, mostrar mensaje de "Vendiendo..."
     if (confirmResult.isConfirmed) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Vendiendo...',
+        text: 'Espere un momento por favor...',
+        allowOutsideClick: false,
+        showCancelButton: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       try {
         console.log(tiketInfo);
         await tiketsStore.addTiket(tiketInfo);
@@ -432,6 +445,10 @@ const confirmarDatos = async () => {
         // Actualizar la lista de asientos vendidos
         await obtenerAsientosVendidos();
 
+        // Cerrar la alerta de "Vendiendo..."
+        Swal.close();
+
+        // Mostrar alerta de éxito
         Swal.fire({
           icon: 'success',
           title: 'Éxito',
@@ -439,15 +456,19 @@ const confirmarDatos = async () => {
           timer: 1500
         });
 
-        cedula.value = ''
-        valorPuesto.value = ''
-        // Ticket vendido exitosamente
+        cedula.value = '';
+        valorPuesto.value = '';
+
+        // Marcar el boleto como vendido
         asientoVendido.value = true;
 
         // Obtener asientos vendidos actualizados
         await obtenerAsientosVendidos();
       } catch (error) {
         console.log(error);
+        Swal.close();
+
+        // Mostrar alerta de error
         Swal.fire({
           icon: 'error',
           title: 'Error',
@@ -466,7 +487,6 @@ const confirmarDatos = async () => {
     });
   }
 };
-
 
 const descargarPDF = (asientoVendido) => {
   const doc = new jsPDF({
