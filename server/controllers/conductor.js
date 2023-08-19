@@ -56,7 +56,7 @@ export const crearConductor = async (req, res) => {
 export const actualizarConductor = async (req, res) => {
   try {
     const { id } = req.params;
-    const { cedula, numero_licencia, ...datosConductor } = req.body;
+    const { nombre, cedula, telefono, direccion, numero_licencia, clase_pase, vigencia_pase } = req.body;
 
     // Verificar si ya existe otro conductor con la misma cédula
     const conductorExistenteCedula = await Conductor.findOne({ cedula, _id: { $ne: id } });
@@ -69,9 +69,11 @@ export const actualizarConductor = async (req, res) => {
     if (conductorExistenteLicencia) {
       return res.status(400).json({ error: 'Ya existe un conductor con este número de licencia.' });
     }
-
+    const datosActualizados = {
+      nombre, cedula, telefono, direccion, numero_licencia, clase_pase, vigencia_pase
+    };
     // Actualizar el conductor en la base de datos
-    const conductorActualizado = await Conductor.findByIdAndUpdate(id, datosConductor, { new: true });
+    const conductorActualizado = await Conductor.findByIdAndUpdate(id, datosActualizados, { new: true });
 
     if (conductorActualizado) {
       res.status(200).json(conductorActualizado);

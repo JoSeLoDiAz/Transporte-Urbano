@@ -69,7 +69,7 @@ export const crearCliente = async (req, res) => {
 export const actualizarCliente = async (req, res) => {
   try {
     const { id } = req.params;
-    const { cc, ...datosCliente } = req.body;
+    const { cc, nombre, apellido, telefono, estado } = req.body;
 
     if (cc) {
       // Verificar si el nuevo número de cédula ya existe en la base de datos
@@ -79,7 +79,15 @@ export const actualizarCliente = async (req, res) => {
       }
     }
 
-    const clienteActualizado = await Cliente.findByIdAndUpdate(id, datosCliente, { new: true });
+    const datosActualizados = {
+      nombre,
+      apellido,
+      cc,
+      telefono,
+      estado
+    };
+
+    const clienteActualizado = await Cliente.findByIdAndUpdate(id, datosActualizados, { new: true });
 
     if (clienteActualizado) {
       res.status(200).json(clienteActualizado);

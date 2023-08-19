@@ -33,7 +33,6 @@
                 <th id="color" scope="col">Origen</th>
                 <th id="color" scope="col">Destino</th>
                 <th id="color" scope="col">Hora Salida</th>
-                <th id="color" scope="col">Fecha Salida</th>
                 <th id="color" scope="col">Tiempo Viaje</th>
                 <th id="color" scope="col">Descripcion</th>
                 <th id="color" scope="col">Estado</th>
@@ -48,7 +47,6 @@
                 <td>{{ ruta.origen }}</td>
                 <td>{{ ruta.destino }}</td>
                 <td>{{ ruta.hora_salida }}</td>
-                <td>{{ formatDate(ruta.fecha_salida) }}</td>
                 <td>{{ ruta.tiempo_estimado_viaje }}</td>
                 <td>{{ ruta.descripcion }}</td>
                 <td :class="{ 'activo': ruta.estado, 'inactivo': !ruta.estado }">
@@ -117,13 +115,7 @@
                   aria-label="Recipient's username" aria-describedby="button-addon2">
 
               </div>
-              <label for="">Fecha Salida</label>
-              <div class="input-group mb-3 ">
 
-                <input v-model="fecha_salida" type="date" class="form-control"
-                  aria-label="Recipient's username" aria-describedby="button-addon2">
-
-              </div>
               <label for="">Tiempo Estimado </label>
               <div class="input-group mb-3 ">
 
@@ -166,7 +158,6 @@ let nombre = ref('');
 let origen = ref('');
 let destino = ref('');
 let hora_salida = ref('');
-let fecha_salida = ref('');
 let tiempo_estimado_viaje = ref('');
 let descripcion = ref('')
 let bd = ref(1);
@@ -175,28 +166,12 @@ let errores = ref('');
 
 const userutas = useRutasStore()
 
-// Filtro para formatear la fecha en "día-mes-año"
-const formatDate = (isoDate) => {
-  const date = new Date(isoDate);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}-${month}-${year}`;
-};
 
 async function pedirRutas() {
   let ruta = await userutas.traerRutas()
   rutas.value = ruta.data
 }
 
-//me toco formatear la fecha para el input
-const formatDateForInput = (isoDate) => {
-  const date = new Date(isoDate);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 
 
@@ -210,7 +185,6 @@ const editarrutas = async (rutaSeleccionada) => {
     origen.value = rutaSeleccionada.origen;
     destino.value = rutaSeleccionada.destino;
     hora_salida.value = rutaSeleccionada.hora_salida;
-    fecha_salida.value = formatDateForInput(rutaSeleccionada.fecha_salida);
     tiempo_estimado_viaje.value = rutaSeleccionada.tiempo_estimado_viaje;
     descripcion.value = rutaSeleccionada.descripcion;
     estado.value = rutaSeleccionada.estado;
@@ -248,7 +222,6 @@ function salir() {
   origen.value = '';
     destino.value = '';
     hora_salida.value = '';
-    fecha_salida.value = '';
     tiempo_estimado_viaje.value = '';
     descripcion.value = '';
 }
@@ -262,7 +235,6 @@ const guardarRuta = async () => {
         origen: origen.value.toUpperCase(),
         destino: destino.value.toUpperCase(),
         hora_salida: hora_salida.value,
-        fecha_salida: fecha_salida.value,
         tiempo_estimado_viaje: tiempo_estimado_viaje.value.toUpperCase(),
         descripcion: descripcion.value.toUpperCase(),
         estado: estado.value
@@ -275,7 +247,6 @@ const guardarRuta = async () => {
       origen.value = '';
       destino.value = '';
       hora_salida.value = '';
-      fecha_salida.value = '';
       tiempo_estimado_viaje.value = '';
       descripcion.value = '';
 
@@ -312,7 +283,6 @@ const guardarRuta = async () => {
       origen: origen.value.toUpperCase(),
       destino: destino.value.toUpperCase(),
       hora_salida: hora_salida.value,
-      fecha_salida: fecha_salida.value,
       tiempo_estimado_viaje: tiempo_estimado_viaje.value.toUpperCase(),
       descripcion: descripcion.value.toUpperCase(),
       estado: estado.value
@@ -326,7 +296,6 @@ const guardarRuta = async () => {
     origen.value = '';
     destino.value = '';
     hora_salida.value = '';
-    fecha_salida.value = '';
     tiempo_estimado_viaje.value = '';
     descripcion.value = '';
 
