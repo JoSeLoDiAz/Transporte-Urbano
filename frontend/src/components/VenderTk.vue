@@ -20,19 +20,20 @@
                 <label for="">Seleccione La Ruta</label>
               </b>
 
-              <select class="form-select" aria-label="Default select example" v-model="rutaSeleccionada">
+              <select class="form-select" :disabled="verificandoBoletos" aria-label="Default select example"
+                v-model="rutaSeleccionada">
                 <option value="">Seleccione...</option>
                 <option v-for="ruta in rutas" :key="ruta._id" :value="ruta._id">{{ ruta.nombre }}</option>
               </select>
               <br>
-
 
               <!-- Select para los vehículos -->
               <b>
                 <form action="">Seleccione El Vehiculo</form>
               </b>
 
-              <select class="form-select" aria-label="Default select example" v-model="vehiculoSeleccionado">
+              <select class="form-select" :disabled="verificandoBoletos" aria-label="Default select example"
+                v-model="vehiculoSeleccionado">
                 <option value="">Seleccione...</option>
                 <option v-for="vehiculo in vehiculos" :key="vehiculo._id" :value="vehiculo._id">{{
                   vehiculo.numero_autobus }}
@@ -46,12 +47,19 @@
               <p>{{ horaSalidaDeRutaSeleccionada }}</p>
               <div>
                 <label for="fechaSalida"><b>Fecha de Salida</b></label>
-                <input v-model="fechaSalida" type="date" class="form-control" id="fechaSalida" />
+                <input v-model="fechaSalida" type="date" :disabled="verificandoBoletos" class="form-control"
+                  id="fechaSalida" />
               </div>
               <b><!-- Botón de Verificación -->
-                <button @click="verificarBoletosVendidos" :disabled="verificandoBoletos" class="btn btn-primary mt-3">
-                  {{ verificandoBoletos ? 'Verificando Boletos Vendidos...' : 'Verificar Boletos Vendidos' }}
-                </button>
+                <div class="d-flex align-items-center justify-content-center mt-3">
+                  <div v-if="loadVerify" class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <button v-else @click="verificarBoletosVendidos" :disabled="verificandoBoletos"
+                    class="btn btn-primary mt-3">
+                    {{ verificandoBoletos ? 'Boletos Verificados' : 'Verificar Boletos Vendidos' }}
+                  </button>
+                </div>
 
               </b>
             </div>
@@ -59,21 +67,26 @@
         </div>
         <div class="col-sm-7">
           <div>
+            <!-- Mostrar mensaje si no se han seleccionado ruta, vehículo y fecha de salida -->
+            <div v-if="mostrarMensaje" class="alert alert-warning" role="alert">
+              Por favor, seleccione una ruta, un vehículo, una fecha de salida y has la verificacion para poder habilitar
+              los asientos.
+            </div>
+
+            <!-- generar botones de asientos -->
             <button v-for="numeroAsiento in numerosDeAsiento" :key="numeroAsiento"
               @click="seleccionarAsiento(numeroAsiento)" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
               id="icono" type="button"
               :class="{ 'btn btn-light mt-4 position-relative': true, 'btn-asiento-vendido': asientosVendidos.includes(numeroAsiento) }"
-              :disabled="asientosVendidos.includes(numeroAsiento) || !rutaSeleccionada || !vehiculoSeleccionado || !fechaSalida">
-              <i class="fa-solid fa-couch " :style="{ color: asientosVendidos.includes(numeroAsiento) ? 'rgb(6, 85, 6)' : 'inherit' }"></i>
+              :disabled="!boletosVerificados">
+              <i class="fa-solid fa-couch "
+                :style="{ color: asientosVendidos.includes(numeroAsiento) ? 'rgb(6, 85, 6)' : 'inherit' }"></i>
               <span class="position-absolute top-0 start-100 translate-middle p-2 border   border-dark rounded-circle"
                 :class="{ 'bg-success': asientosVendidos.includes(numeroAsiento) }" id="a">
                 {{ numeroAsiento }}
                 <span class="visually-hidden"></span>
               </span>
             </button>
-
-
-
 
           </div>
         </div>
@@ -117,30 +130,11 @@
                     </p>
                   </div>
                 </div>
-
               </div>
             </div>
-
-
-            <!-- <div v-for="asientoVendido in pintarVendidos" :key="asientoVendido.num_tiket">
-              <p>Puesto: {{ asientoVendido.numero_de_puesto }}</p>
-              <p>Pasajero: {{ asientoVendido.cliente.nombre }}</p>
-              <p>Apellido: {{ asientoVendido.cliente.apellido }}</p>
-              <p>Cedula: {{ asientoVendido.cliente.cc }}</p>
-              <hr>
-            </div> -->
-
-
           </div>
-
-
-
-
         </div>
-
-
       </div>
-
 
       <!-- Modal -->
       <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -189,21 +183,21 @@ const venderStore = useVenderStore();
 const cedula = ref('');
 const valorPuesto = ref('');
 let vehiculoSeleccionadoValor = ref('');
+const rutaSeleccionada = ref('');
+const vehiculoSeleccionado = ref('');
+const fechaSalida = ref('');
 
-const rutaSeleccionada = ref("");
-const vehiculoSeleccionado = ref("");
+const asientoVendido = ref(false);
+const verificandoBoletos = ref(false);
+const loadVerify = ref(false);
+const boletosVerificados = ref(false);
+const numeroAsientoSeleccionado = ref(null);
+
 const rutas = ref([]);
 const asientosVendidos = ref([]);
 const pintarVendidos = ref([])
-
-console.log("ok");
-
-console.log("asientos vendidos");
-console.log(asientosVendidos);
 const vehiculos = ref([]);
-const fechaSalida = ref('');
-const asientoVendido = ref(false);
-const verificandoBoletos = ref(false);
+
 const tiketInfo = ref({
   vehiculo: '',
   conductor: '',
@@ -212,21 +206,16 @@ const tiketInfo = ref({
   numero_de_puesto: '',
   valor_puesto: 0,
 });
-const numeroAsientoSeleccionado = ref(null);
 
 const seleccionarAsiento = (numeroAsiento) => {
   numeroAsientoSeleccionado.value = numeroAsiento;
 };
-
-
 
 // Obtener la hora de salida de la ruta seleccionada
 const horaSalidaDeRutaSeleccionada = computed(() => {
   const ruta = rutas.value.find(ruta => ruta._id === rutaSeleccionada.value);
   return ruta ? ruta.hora_salida : 'Hora no disponible';
 });
-
-
 
 // Función para obtener las rutas
 const obtenerRutas = async () => {
@@ -243,8 +232,6 @@ const obtenerRutas = async () => {
   }
 };
 
-
-
 // Función para obtener los vehículos
 const obtenerVehiculos = async () => {
   try {
@@ -257,8 +244,6 @@ const obtenerVehiculos = async () => {
   }
 };
 
-
-
 // Propiedad calculada para generar un arreglo de números de asientos
 const numerosDeAsiento = computed(() => {
   vehiculoSeleccionadoValor = vehiculoSeleccionado.value;
@@ -270,9 +255,13 @@ const numerosDeAsiento = computed(() => {
   return [];
 });
 
+const mostrarMensaje = computed(() => {
+  return !rutaSeleccionada.value || !vehiculoSeleccionado.value || !fechaSalida.value;
+});
 
 const obtenerAsientosVendidos = async () => {
   if (rutaSeleccionada.value && vehiculoSeleccionado.value && fechaSalida.value) {
+    console.log("habilita asientos");
     await venderStore.obtenerAsientosVendidos(rutaSeleccionada.value, fechaSalida.value).then((res) => {
       asientosVendidos.value = res.data.map(asiento => asiento.numero_de_puesto);
       console.log(asientosVendidos.value);
@@ -282,11 +271,10 @@ const obtenerAsientosVendidos = async () => {
   }
 }
 
-
 const verificarBoletosVendidos = async () => {
   if (rutaSeleccionada.value && vehiculoSeleccionado.value && fechaSalida.value) {
     try {
-      verificandoBoletos.value = true;
+      loadVerify.value = true;
       await obtenerAsientosVendidos();
 
       // Deshabilitar botones y aplicar color verde a asientos vendidos
@@ -307,7 +295,9 @@ const verificarBoletosVendidos = async () => {
     } catch (error) {
       console.error(error);
     } finally {
-      verificandoBoletos.value = false;
+      boletosVerificados.value = true;
+      loadVerify.value = false
+      verificandoBoletos.value = true;
     }
   } else {
     Swal.fire({
@@ -318,7 +308,6 @@ const verificarBoletosVendidos = async () => {
     });
   }
 };
-
 
 // Función para cargar asientos vendidos y actualizar botones
 const cargarAsientosVendidos = async () => {
@@ -338,15 +327,12 @@ const cargarAsientosVendidos = async () => {
   }
 };
 
-
-
 const cerrarModal = () => {
   const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
   if (closeButton) {
     closeButton.click();
   }
 };
-
 
 const confirmarDatos = async () => {
   if (rutaSeleccionada.value === "") {
@@ -488,44 +474,97 @@ const confirmarDatos = async () => {
   }
 };
 
+const formatDate = (dateString) => {
+  console.log("Fecha de entrada en dateString:", dateString);
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const date = new Date(dateString);
+  console.log("Fecha de salida en date:", date);
+  date.setDate(date.getDate() + 1);
+  const formattedDate = date.toLocaleDateString("es-CO", options);
+  console.log("Fecha formateada:", formattedDate);
+  return formattedDate;
+};
+
+
+
+const formatDateTime = (utcTimeString) => {
+  const utcDate = new Date(utcTimeString);
+  const colombiaOffset = -5 * 60; // En minutos
+  const localDate = new Date(utcDate.getTime() + colombiaOffset * 60 * 1000);
+
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true, // Usar formato de 12 horas
+    timeZone: "America/Bogota", // Zona horaria de Colombia
+  };
+
+  const formatter = new Intl.DateTimeFormat("es-CO", options);
+  return formatter.format(localDate);
+};
+
+const formatTime12Hour = (isoTimeString) => {
+  const timeParts = isoTimeString.split(":");
+  const hours = parseInt(timeParts[0], 10);
+  const minutes = parseInt(timeParts[1], 10);
+  const formattedHours = (hours % 12) || 12; // Manejo de las 12 PM
+  const amPm = hours < 12 ? "AM" : "PM";
+  return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${amPm}`;
+};
+
 const descargarPDF = (asientoVendido) => {
   const doc = new jsPDF({
-    orientation: 'portrait', // Orientación del documento (vertical)
-    unit: 'mm', // Unidad de medida (milímetros)
-    format: [100, 150], // Tamaño del documento (ancho, alto)
+    orientation: 'portrait',
+    unit: 'mm',
+    format: [100, 150],
   });
-
   doc.setFontSize(16);
-  const titulo = 'TICKET DE VIAJE';
+  const titulo = 'Trans Urban';
   const tituloWidth = doc.getStringUnitWidth(titulo) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-  const tituloX = (doc.internal.pageSize.width - tituloWidth) / 2; // Centrar el título en la página
-  doc.text(titulo, tituloX, 10);
+  const tituloX = (doc.internal.pageSize.width - tituloWidth) / 2;
+  doc.text(titulo, tituloX, 5);
 
   // Contenido del ticket
-  doc.setFontSize(12);
-  // Formatear la fecha antes de mostrarla
-  const fechaSalidaFormateada = asientoVendido.fecha_salida.split('T')[0]; // Obtener la parte de la fecha
+  doc.setFontSize(8);
 
+
+  const fechaVentaFormateada = formatDateTime(asientoVendido.fecha_tiket);
+  const fechaSalidaFormateada = formatDate(asientoVendido.fecha_salida);
+  const horaSalidaFormateada = formatTime12Hour(asientoVendido.ruta.hora_salida);
   // Mostrar los campos existentes
-  doc.text(`Puesto: ${asientoVendido.numero_de_puesto}`, 10, 30);
-  doc.text(`Pasajero: ${asientoVendido.cliente.nombre} ${asientoVendido.cliente.apellido}`, 10, 40);
-  doc.text(`Cédula: ${asientoVendido.cliente.cc}`, 10, 50);
-  doc.text(`Fecha de Salida: ${fechaSalidaFormateada}`, 10, 60); // Usar la fecha formateada
-  doc.text(`Ruta: ${asientoVendido.ruta.nombre}`, 10, 70);
-  doc.text(`Hora salida: ${asientoVendido.ruta.hora_salida}`, 10, 80);
- 
+  doc.text(`Tikete de venta`, 40, 10);
+  doc.text(`Fecha de venta: ${fechaVentaFormateada}`, 10, 15);
+  doc.text(`vehiculo: ${asientoVendido.vehiculo.numero_autobus} / ${asientoVendido.vehiculo.matricula_vehiculo}`, 10, 20);
+  doc.text(`Puesto: ${asientoVendido.numero_de_puesto}`, 10, 25);
+  doc.text(`Tiket No: ${asientoVendido.num_tiket}`, 10, 30);
+  doc.text(`Pasajero: ${asientoVendido.cliente.nombre} ${asientoVendido.cliente.apellido}`, 10, 35);
+  doc.text(`Cédula: ${asientoVendido.cliente.cc}`, 10, 40);
+  doc.text(`Fecha de Salida: ${fechaSalidaFormateada}`, 10, 45);
+  doc.text(`Ruta: ${asientoVendido.ruta.nombre}`, 10, 50);
+  doc.text(`Hora salida: ${horaSalidaFormateada}`, 10, 55);
+  doc.text(`Valor Ticket: ${asientoVendido.valor_puesto}`, 10, 60);
+
 
 
   // Línea divisoria
   doc.setLineWidth(0.5);
-  doc.line(10, 85, 90, 85);
+  doc.line(10, 70, 90, 70);
 
   // Información adicional
   doc.setFontSize(10);
-  doc.text('Gracias por elegir nuestro servicio.', 10, 100);
-  doc.text('¡Buen viaje te desea Trans-Urban!', 10, 110);
+  doc.text('Gracias por elegir nuestro servicio.', 10, 80);
+  doc.text('¡Buen viaje te desea Trans-Urban!', 10, 85);
 
-  
+
   doc.save(`ticket_Puesto_${asientoVendido.numero_de_puesto}.pdf`);
 };
 
