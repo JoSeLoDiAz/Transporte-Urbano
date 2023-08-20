@@ -37,7 +37,6 @@ export const useVehiculosStore = defineStore("vehiculos", () => {
       const response = await axios.get(`${BASE_URL}/vehiculos`);
       return response.data;
     } catch (error) {
-      console.log("Error al obtener los vehículos");
       throw new Error("Error al obtener los vehículos");
     }
   };

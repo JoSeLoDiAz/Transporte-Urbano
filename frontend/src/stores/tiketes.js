@@ -14,7 +14,6 @@ export const useVenderStore = defineStore("venderTiket", () => {
     try {
       return await axios.get(`https://transurban.onrender.com/tikets`);
     } catch (error) {
-      console.log("no sirve");
     }
   };
 

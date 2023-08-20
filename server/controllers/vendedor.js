@@ -85,7 +85,6 @@ export const crearVendedor = async (req, res) => {
 export const actualizarestado = async (req, res) => {
 
     const id = req.params.id
-    // console.log(`estado actualizado ${id}`);
 
     const actualizado = {
         estado: req.body.estado
@@ -95,7 +94,6 @@ export const actualizarestado = async (req, res) => {
         const vendedorActualizado = await Vendedor.findByIdAndUpdate(id, actualizado);
 
         if (vendedorActualizado) {
-            console.log(vendedorActualizado);
             res.status(200).json(vendedorActualizado);
         } else {
             res.status(404).json({ error: 'vendedor no encontrado.' });

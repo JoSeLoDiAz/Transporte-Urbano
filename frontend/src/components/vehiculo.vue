@@ -185,7 +185,6 @@ const obtenerNombreConductor = async (id) => {
         const response = await vehiculosStore.obtenerNombreConductor(id);
         if (response && response.data && response.data.cedula) {
             const cedulaConductor = response.data.cedula;
-            console.log('Cédula del conductor:', cedulaConductor);
             return response.data.nombre;
         } else {
             return 'Nombre Desconocido';
@@ -225,7 +224,6 @@ const pedirvehiculos = async () => {
             };
         }));
     } catch (error) {
-        console.log(error);
     }
 };
 

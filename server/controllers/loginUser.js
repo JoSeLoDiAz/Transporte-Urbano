@@ -7,7 +7,6 @@ import Vendedor from '../models/vendedor.js';
 const iniciarSesion = async (req, res) => {
 
   const { email, password } = req.body;
-// console.log(email,password);
   try {
     let user = null;
     let userType = null;
@@ -16,19 +15,16 @@ const iniciarSesion = async (req, res) => {
     user = await Administrador.findOne({ email });
     if (user) {
       userType = 'Administrador';
-   //   console.log("Inicia Administrador");
     } else {
       // Verificar si el usuario es un Administrador de Rutas
       user = await AdministradorRutas.findOne({ email });
       if (user) {
         userType = 'AdministradorRutas';
-        console.log("Inicia Administrador de Rutas");
       } else {
         // Verificar si el usuario es un Vendedor
         user = await Vendedor.findOne({ email });
         if (user) {
           userType = 'Vendedor';
-          console.log("Inicia Vendedor");
         }
       }
     }

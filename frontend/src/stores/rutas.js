@@ -22,7 +22,6 @@ export const useRutasStore = defineStore("rutas", () => {
     try {
       return await axios.put(`https://transurban.onrender.com/rutas/estado/${id}`, { estado: estado });
     } catch (error) {
-      console.log(error);
       return error;
     }
   };
@@ -32,7 +31,6 @@ export const useRutasStore = defineStore("rutas", () => {
     try {
       return await axios.get(`https://transurban.onrender.com/rutas`);
     } catch (error) {
-      console.log("no sirve");
     }
   };
 

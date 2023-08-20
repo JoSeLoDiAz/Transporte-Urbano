@@ -164,7 +164,6 @@ async function pedirconductores() {
     let conductor = await useconductor.traerconductores()
     conductores.value = conductor.data
   } catch (error) {
-    console.log(error);
   }
 }
 

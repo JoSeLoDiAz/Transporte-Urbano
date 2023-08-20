@@ -34,8 +34,6 @@ export const obtenerTicket = async (req, res) => {
 export const obtenerAsientosVendidos = async (req, res) => {
   try {
     const { rutaId, fechaVenta } = req.params;
-    console.log("rutaId:", rutaId);
-    console.log("fechaVenta:", fechaVenta);
     // Haz una consulta a la base de datos para obtener los asientos vendidos
     const asientosVendidos = await Tiket.find({
       ruta: rutaId,
@@ -85,10 +83,6 @@ export const crearTicket = async (req, res) => {
     // Validar que la fecha y hora de salida no sea inferior a la fecha actual
     const fechaSalida = new Date(fecha_salida);
     const fechaActual = new Date();
-    // console.log(fechaSalida, fechaActual, fechaSalida >= fechaActual);
-    // if (fechaSalida >= fechaActual) {
-    //   return res.status(400).json({ error: 'La fecha y hora de salida no puede ser para otro dia a la fecha actual.' });
-    // }
 
     // Obtener el siguiente valor de la secuencia
     const counter = await Counter.findOneAndUpdate(

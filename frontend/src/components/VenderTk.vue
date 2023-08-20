@@ -222,8 +222,6 @@ const obtenerRutas = async () => {
   try {
     const response = await rutasStore.traerRutas();
     rutas.value = response.data;
-    console.log("rutas");
-    console.log(rutas);
 
     // Llamar a la función obtenerAsientosVendidos después de obtener las rutas
     await obtenerAsientosVendidos(rutaSeleccionada.value, fechaSalida.value);
@@ -237,10 +235,7 @@ const obtenerVehiculos = async () => {
   try {
     const response = await vehiculosStore.traerVehiculos();
     vehiculos.value = response;
-    console.log("vehiculos");
-    console.log(vehiculos);
   } catch (error) {
-    console.error(error);
   }
 };
 
@@ -261,12 +256,9 @@ const mostrarMensaje = computed(() => {
 
 const obtenerAsientosVendidos = async () => {
   if (rutaSeleccionada.value && vehiculoSeleccionado.value && fechaSalida.value) {
-    console.log("habilita asientos");
     await venderStore.obtenerAsientosVendidos(rutaSeleccionada.value, fechaSalida.value).then((res) => {
       asientosVendidos.value = res.data.map(asiento => asiento.numero_de_puesto);
-      console.log(asientosVendidos.value);
       pintarVendidos.value = res.data
-      console.log(pintarVendidos.value);
     })
   }
 }
@@ -424,7 +416,6 @@ const confirmarDatos = async () => {
       });
 
       try {
-        console.log(tiketInfo);
         await tiketsStore.addTiket(tiketInfo);
         cerrarModal();
 
@@ -451,7 +442,6 @@ const confirmarDatos = async () => {
         // Obtener asientos vendidos actualizados
         await obtenerAsientosVendidos();
       } catch (error) {
-        console.log(error);
         Swal.close();
 
         // Mostrar alerta de error
@@ -475,7 +465,6 @@ const confirmarDatos = async () => {
 };
 
 const formatDate = (dateString) => {
-  console.log("Fecha de entrada en dateString:", dateString);
   const options = {
     year: "numeric",
     month: "long",
@@ -483,10 +472,8 @@ const formatDate = (dateString) => {
   };
 
   const date = new Date(dateString);
-  console.log("Fecha de salida en date:", date);
   date.setDate(date.getDate() + 1);
   const formattedDate = date.toLocaleDateString("es-CO", options);
-  console.log("Fecha formateada:", formattedDate);
   return formattedDate;
 };
 

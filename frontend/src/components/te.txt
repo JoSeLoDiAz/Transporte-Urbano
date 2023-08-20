@@ -166,10 +166,6 @@ const rutas = ref([]);
 const asientosVendidos = ref([]);
 const pintarVendidos =ref ([])
 
-console.log("ok");
-
-console.log("asientos vendidos");
-console.log(asientosVendidos);
 const vehiculos = ref([]);
 const fechaSalida = ref('');
 const asientoVendido = ref(false);

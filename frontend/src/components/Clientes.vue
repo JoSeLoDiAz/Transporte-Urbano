@@ -130,7 +130,6 @@ async function pedirclientes() {
     const cliente = await useclientes.traerclientes();
     clientes.value = cliente.data;
   } catch (error) {
-    console.log(error);
   }
 }
 const editarCliente = async (clienteSeleccionado) => {

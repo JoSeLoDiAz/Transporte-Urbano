@@ -78,7 +78,6 @@ const login = async () => {
       
     } else {
       errores.value = "Error interno para iniciar sesion,\n Intenta Nuevamente"
-      console.log('Error al ingresar:', error);
     }
     Swal.fire({
       icon: 'error',

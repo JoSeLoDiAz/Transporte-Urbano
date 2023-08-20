@@ -14,7 +14,6 @@ export const useConductorStore = defineStore("conductores", () => {
     try {
       return await axios.get(`https://transurban.onrender.com/conductores`);
     } catch (error) {
-      console.log("no sirve");
     }
   };
 
