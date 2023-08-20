@@ -78,7 +78,7 @@
               @click="seleccionarAsiento(numeroAsiento)" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
               id="icono" type="button"
               :class="{ 'btn btn-light mt-4 position-relative': true, 'btn-asiento-vendido': asientosVendidos.includes(numeroAsiento) }"
-              :disabled="!boletosVerificados">
+              :disabled="asientosVendidos.includes(numeroAsiento) || !rutaSeleccionada || !vehiculoSeleccionado || !fechaSalida || !verificandoBoletos">
               <i class="fa-solid fa-couch "
                 :style="{ color: asientosVendidos.includes(numeroAsiento) ? 'rgb(6, 85, 6)' : 'inherit' }"></i>
               <span class="position-absolute top-0 start-100 translate-middle p-2 border   border-dark rounded-circle"
